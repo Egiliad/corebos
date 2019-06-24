@@ -614,9 +614,9 @@ class Import_Data_Controller {
 			$viewer->assign('IMPORT_RESULT', $importStatusCount);
 			$importResult = $viewer->fetch('Import_Result_Details.tpl');
 			$importResult = str_replace('align="center"', '', $importResult);
-			$emailData = $coreBOS_uiapp_name . getTraslatedString('import_progress').' <br/><br/>' .
+			$emailData = $coreBOS_uiapp_name . getTraslatedString('import_progress','Import').' <br/><br/>' .
 				$importResult . '<br/><br/>'.
-				getTranslatedString('logIn_checkConfirm');
+				getTranslatedString('logIn_checkConfirm','Import');
 
 			//$userName = getFullNameFromArray('Users', $importDataController->user->column_fields);
 			$userEmail = $importDataController->user->email1;
