@@ -1082,7 +1082,14 @@ $app_strings = array(
 'Qty'=>'Qty',
 'Price'=>'Price',
 'Discount'=>'Discount',
+'LBL_IMPORT_EXPORT_BUTTON' => 'Import/Export',
+'LBL_MENU_BUTTON' => 'Menu',
 'LBL_ADD_BUTTON' => 'Add',
+'LBL_SAVE_CURRENT_BUTTON' => 'Save Current',
+'LBL_APPLY_BUTTON' => 'Apply',
+'LBL_RENAME_BUTTON' => 'Rename',
+'LBL_DOWNLOAD_BUTTON' => 'Download',
+'LBL_IMPORT_BUTTON' => 'Import',
 
 // Added after 5.0.4 GA
 

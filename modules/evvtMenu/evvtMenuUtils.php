@@ -106,6 +106,18 @@ function getMenuElements() {
 	return $menustructure;
 }
 
+function getsavedMenu() {
+	global $adb;
+	$sql = "SELECT * FROM `vtiger_savemenu`";
+	$result = $adb->query($sql);
+	if ($result && $adb->num_rows($result)>0) {
+		while ($res = $adb->fetch_array($result)) {
+			$savedm[$res['savemenuid']] = $res['menuname'];
+		}
+	}
+	return $savedm;
+}
+
 function getMenuArray($mparent) {
 	global $adb,$current_user;
 	$is_admin = is_admin($current_user);
