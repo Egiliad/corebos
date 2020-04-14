@@ -88,6 +88,10 @@ switch ($_REQUEST['_op']) {
 	case 'setconfiggmp':
 		include_once 'include/integrations/gmp/settings.php';
 		break;
+	case 'getconfigfsi':
+	case 'setconfigfsi':
+		include_once 'include/integrations/fsi/settings.php';
+		break;
 	case 'getconfigrecordversioning':
 	case 'setconfigrecordversioning':
 		include_once 'include/integrations/recordversioning/settings.php';
@@ -159,6 +163,12 @@ switch ($_REQUEST['_op']) {
 				'title' => getTranslatedString('ElasticSearch Activation', 'Utilities'),
 				'desc' => getTranslatedString('Elasticsearch_Desc', 'Utilities'),
 				'url' => 'index.php?action=integration&module=Utilities&_op=getconfigelasticsearch',
+			),
+			array(
+				'abbr' => 'FS',
+				'title' => getTranslatedString('FS Activation', 'Utilities'),
+				'desc' => getTranslatedString('FS Activation_Desc', 'Utilities'),
+				'url' => 'index.php?action=integration&module=Utilities&_op=getconfigfsi',
 			),
 		);
 		$smarty->assign('integrations', $intgr);
