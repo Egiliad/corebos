@@ -1014,7 +1014,11 @@ class QueryGenerator {
 						}
 
 						$fieldSql .= "$fieldGlue trim($columnSql) $valueSql";
-						$fieldGlue = ' OR';
+						if ($conditionInfo['operator'] == 'e' && (empty($conditionInfo['value']) || $conditionInfo['value'] == 'null') && $field->getFieldDataType() == 'reference') {
+							$fieldGlue = ' AND';
+						} else {
+							$fieldGlue = ' OR';
+						}
 					}
 				} elseif (in_array($fieldName, $this->ownerFields)) {
 					$concatSql = getSqlForNameInDisplayFormat(array('first_name'=>'vtiger_users.first_name', 'last_name'=>'vtiger_users.last_name'), 'Users');
@@ -1332,7 +1336,11 @@ class QueryGenerator {
 					$value = getValidDBInsertDateTimeValue($value);
 				}
 				if (empty($value)) {
-					$sql[] = 'IS NULL or '.$field->getTableName().'.'.$field->getColumnName()." = ''";
+					if ($operator == 'n') {
+						$sql[] = 'IS NOT NULL and '.$field->getTableName().'.'.$field->getColumnName()." <> ''";
+					} else {
+						$sql[] = 'IS NULL or '.$field->getTableName().'.'.$field->getColumnName()." = ''";
+					}
 					return $sql;
 				}
 			} elseif ($field->getFieldDataType() === 'currency') {
@@ -1414,6 +1422,9 @@ class QueryGenerator {
 				case 'b':
 					$sqlOperator = '<';
 					break;
+			}
+			if ($field->getFieldDataType() == 'reference' && $operator == 'e' && empty($value)) {
+				$sql[] = " IS NULL";
 			}
 			if ($this->requiresQuoteSearchOperators($operator) || (!$this->isNumericType($field->getFieldDataType()) &&
 					($field->getFieldName() != 'birthday' || ($field->getFieldName() == 'birthday' && $this->isRelativeSearchOperators($operator))))) {

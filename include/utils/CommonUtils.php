@@ -1470,17 +1470,32 @@ function getParentTab() {
 	return 'ptab';
 }
 
-/**
- * This function is used to get the days in between the current time and the modified time of an entity .
- * Takes the input parameter as $id - crmid  it will calculate the number of days in between the
- * the current time and the modified time from the vtiger_crmentity table and return the result as a string.
- * The return format is updated <No of Days> day ago <(date when updated)>
- */
 function updateInfo($id) {
-	global $log, $adb, $app_strings;
+	global $log;
 	$log->debug('> updateInfo ' . $id);
-	$query = 'SELECT modifiedtime, modifiedby, smcreatorid FROM vtiger_crmentity WHERE crmid = ?';
-	$result = $adb->pquery($query, array($id));
+	$DETAILVIEW_PAGEHEADER_MESSAGE = GlobalVariable::getVariable('Application_DetailView_PageHeader_Message', 'UPDATE');
+	if ($DETAILVIEW_PAGEHEADER_MESSAGE=='OFF') {
+		$update_info = '';
+	} elseif (is_numeric($DETAILVIEW_PAGEHEADER_MESSAGE) && getSalesEntityType($DETAILVIEW_PAGEHEADER_MESSAGE)=='cbMap') {
+		include_once 'modules/Utilities/showMsgWidget.php';
+		$msg = new showmsgwidget_DetailViewBlock();
+		$update_info = $msg->process(array('msgcondition'=>$DETAILVIEW_PAGEHEADER_MESSAGE, 'ID'=>$id));
+	} else {
+		$update_info = updateInfoSinceMessage($id);
+	}
+	$log->debug('< updateInfo');
+	return $update_info;
+}
+
+/**
+ * This function is used to calculate the number of days in between the current time and the modified time of an entity.
+ * @param integer $id - crmid
+ * @return string "updated <No of Days> day ago <(date when updated)>"
+ */
+function updateInfoSinceMessage($id) {
+	global $log, $adb, $app_strings;
+	$log->debug('> updateInfoSinceMessage ' . $id);
+	$result = $adb->pquery('SELECT modifiedtime, modifiedby, smcreatorid FROM vtiger_crmentity WHERE crmid=?', array($id));
 	$modifiedtime = $adb->query_result($result, 0, 'modifiedtime');
 	$modifiedby_id = $adb->query_result($result, 0, 'modifiedby');
 	if (empty($modifiedby_id)) {
@@ -1504,7 +1519,7 @@ function updateInfo($id) {
 	} else {
 		$update_info = $app_strings['LBL_UPDATED'] . ' ' . $days_diff . ' ' . $app_strings['LBL_DAYS_AGO'] . ' (' . $date . ') ' . $modifiedby;
 	}
-	$log->debug('< updateInfo');
+	$log->debug('< updateInfoSinceMessage');
 	return $update_info;
 }
 
@@ -2387,16 +2402,16 @@ function getTemplateDetails($templateid, $crmid = null) {
 			}
 		}
 	}
-	$log->debug('< from getTemplateDetails');
+	$log->debug('< getTemplateDetails');
 	return $returndata;
 }
 
 /**
- * 	This function is used to merge the Template Details with the email description
- *  @param string $description  -body of the mail(ie template)
- * 	@param integer $tid  - Id of the entity
- *  @param string $parent_type - module of the entity
- * 	return string $description - Returns description, merged with the input template.
+ * This function is used to merge the template with the given record fields
+ * @param string $description - body of the template
+ * @param integer $id - id of the entity
+ * @param string $parent_type - module of the entity
+ * @return string template merged with the record values of the given crmid
  */
 function getMergedDescription($description, $id, $parent_type) {
 	global $adb, $log, $current_user;
@@ -2405,7 +2420,7 @@ function getMergedDescription($description, $id, $parent_type) {
 		$parent_type = getSalesEntityType($id);
 	}
 	if (empty($parent_type) || empty($id)) {
-		$log->debug('< from getMergedDescription: no record information');
+		$log->debug('< getMergedDescription: no record information');
 		return $description;
 	}
 	if (strpos($id, 'x')>0) {
@@ -2456,7 +2471,7 @@ function getMergedDescription($description, $id, $parent_type) {
 		$ct = new VTSimpleTemplate($description, true);
 		$description = $ct->render($entityCache, vtws_getEntityId('cbCompany').'x'.$adb->query_result($cmprs, 0, 0));
 	}
-	$log->debug('< from getMergedDescription');
+	$log->debug('< getMergedDescription');
 	return $description;
 }
 
@@ -2487,19 +2502,57 @@ function getMergedDescriptionCustomVars($fields, $description) {
 	return $description;
 }
 
-/** 	Function used to retrieve a single field value from database
- * 	@param string $tablename - tablename from which we will retrieve the field value
- * 	@param string $fieldname - fieldname to which we want to get the value from database
- * 	@param string $idname	 - idname which is the name of the entity id in the table like, inoviceid, quoteid, etc.,
- * 	@param int    $id	 - entity id
- * 	return string $fieldval  - field value of the needed fieldname from database will be returned
+/**
+ * This function is used to merge a URL Template with the fields from a record
+ *  @param string $url  -body of the URL
+ *  @param integer $id - Id of the entity
+ *  @param string $parent_type - module of the entity
+ *  @return string URL template merged with the field values from the record.
+ */
+function getMergedDescriptionForURL($url, $id, $parent_type) {
+	global $log;
+	$log->debug('> getMergedDescriptionForURL');
+	$url = getMergedDescription($url, $id, $parent_type);
+	$searchModule = (1 == GlobalVariable::getVariable('Application_B2B', '1')) ? 'Accounts' : 'Contacts';
+	$relid = getRelatedAccountContact($id, $searchModule);
+	if (!empty($relid)) {
+		$url = getMergedDescription($url, $relid, $searchModule);
+	}
+	$pieces = parse_url($url);
+	$params = array();
+	if (!empty($pieces['query'])) {
+		$sub = chr(7).' ';
+		$q = preg_replace('/&\s/', $sub, $pieces['query']);
+		// we don't use parse_str because we want to perserve spaces and dots
+		$pairs = explode('&', $q);
+		foreach ($pairs as $pair) {
+			if (empty($pair)) {
+				continue;
+			}
+			$pos = strpos($pair, '=');
+			$params[substr($pair, 0, $pos)] = str_replace(chr(7), '&', substr($pair, $pos+1));
+		}
+	}
+	$log->debug('< getMergedDescriptionForURL');
+	return (isset($pieces['scheme']) ? $pieces['scheme'].'://' : (substr($url, 0, 2)=='//' ? '//' : ''))
+		.(isset($pieces['host']) ? $pieces['host'] : '')
+		.(isset($pieces['path']) ? $pieces['path'].(count($params)>0 ? '?' : '') : '')
+		.http_build_query($params);
+}
+
+/** Function used to retrieve a single field value from database
+ * @param string $tablename - tablename from which we will retrieve the field value
+ * @param string $fieldname - fieldname of which we want to get the value from database
+ * @param string $idname	 - the name of the primary key field in the table like, inoviceid, quoteid, etc.,
+ * @param int    $id	 - entity id crmid of the record we want to get the value from
+ * @return string $fieldval  - field value of the fieldname from database
  */
 function getSingleFieldValue($tablename, $fieldname, $idname, $id) {
 	global $log, $adb;
 	$log->debug("> getSingleFieldValue $tablename, $fieldname, $idname, $id");
-	$rs = $adb->pquery("select $fieldname from $tablename where $idname = ?", array($id));
+	$rs = $adb->pquery("select $fieldname from $tablename where $idname=?", array($id));
 	$fieldval = $adb->query_result($rs, 0, $fieldname);
-	$log->debug("< getSingleFieldValue return value => $fieldval");
+	$log->debug("< getSingleFieldValue: $fieldval");
 	return $fieldval;
 }
 
