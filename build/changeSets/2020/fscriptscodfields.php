@@ -32,6 +32,22 @@ class fscriptscodfields extends cbupdaterWorker {
 					'label'=>'FS Code',
 					'massedit' => 0,
 				),
+                'fssynced' => array(
+                    'columntype'=>'varchar(3)',
+                    'typeofdata'=>'C~O',
+                    'uitype'=>'56',
+                    'displaytype'=>'1',
+                    'label'=>'FS Synced',
+                    'massedit' => 1,
+                ),
+                'fsresult' => array(
+                    'columntype'=>'varchar(255)',
+                    'typeofdata'=>'V~O',
+                    'uitype'=>'1',
+                    'displaytype'=>'1',
+                    'label'=>'Synced With FS',
+                    'massedit' => 0,
+                ),
 			);
 			$fields = array(
 				'Accounts' => array(
@@ -43,17 +59,20 @@ class fscriptscodfields extends cbupdaterWorker {
 				'Invoice' => array(
 					'LBL_INVOICE_INFORMATION' => $fscode,
 				),
-				'PurchaseOrder' => array(
-					'LBL_PURCHASEORDER_INFORMATION' => $fscode,
-				),
 				'Products' => array(
-					'LBL_PRODUCTS_INFORMATION' => $fscode,
+					'LBL_PRODUCT_INFORMATION' => $fscode,
 				),
 				'Services' => array(
-					'LBL_SERVICES_INFORMATION' => $fscode,
+					'LBL_SERVICE_INFORMATION' => $fscode,
 				),
 				'Vendors' => array(
-					'LBL_VENDORS_INFORMATION' => $fscode,
+					'LBL_VENDOR_INFORMATION' => $fscode,
+				),
+				'PurchaseOrder' => array(
+					'LBL_PO_INFORMATION' => $fscode,
+				),
+				'InventoryDetails' => array(
+					'LBL_INVENTORYDETAILS_INFORMATION' => $fscode,
 				),
 			);
 			$this->massCreateFields($fields);

@@ -89,7 +89,7 @@ class corebos_fsi {
 			<originmodule>
 			<originname>Accounts</originname>
 			</originmodule>
-				
+			
 			<wsconfig>
 			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
@@ -111,7 +111,7 @@ class corebos_fsi {
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
 			</wsconfig>
-				
+			
 			<fields>
 			<field>
 			<fieldname>nombre</fieldname>
@@ -144,12 +144,18 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-				
+			
 			<Response>
 			<field>
-			<fieldname>data.codaccount</fieldname>
+			<fieldname>data.codcliente</fieldname>
 			<destination>
 			<field>fscode</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -167,7 +173,7 @@ class corebos_fsi {
 				$fswflow->description = "Create Accounts on FacturaScripts";
 				$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
 				$fswflow->defaultworkflow = 1;
-
+				$fswflow->test = '';
 				$fsworkflow->save($fswflow);
 				$fstm = new VTTaskManager($adb);
 				$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
@@ -252,13 +258,23 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
+			<field>
+			<fieldname>codcliente</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID></OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
 			</fields>
-				
+			
 			<Response>
 			<field>
-			<fieldname>data.codaccount</fieldname>
+			<fieldname>data.codcliente</fieldname>
 			<destination>
-			<field>fscode</field>
+			<field></field>
 			</destination>
 			</field>
 			</Response>
@@ -275,7 +291,7 @@ class corebos_fsi {
 					$fswflow->description = "Update Accounts on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
 					$fswflow->defaultworkflow = 1;
-
+					$fswflow->test ='';
 					$fsworkflow->save($fswflow);
 					$fstm = new VTTaskManager($adb);
 					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
@@ -365,9 +381,15 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codcontact</fieldname>
+			<fieldname>data.codcontacto</fieldname>
 			<destination>
 			<field>fscode</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -384,7 +406,7 @@ class corebos_fsi {
 					$fswflow->description = "Create Contacts on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
 					$fswflow->defaultworkflow = 1;
-
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 					$fstm = new VTTaskManager($adb);
 					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
@@ -470,13 +492,23 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
+			<field>
+			<fieldname>codcontacto</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID></OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
 			</fields>
 				
 			<Response>
 			<field>
-			<fieldname>data.codcontact</fieldname>
+			<fieldname>data.codcontacto</fieldname>
 			<destination>
-			<field>fscode</field>
+			<field></field>
 			</destination>
 			</field>
 			</Response>
@@ -493,7 +525,7 @@ class corebos_fsi {
 					$fswflow->description = "Update Contacts on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
 					$fswflow->defaultworkflow = 1;
-
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 					$fstm = new VTTaskManager($adb);
 					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
@@ -586,9 +618,21 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codinvoice</fieldname>
+			<fieldname>data.codfacturacliente</fieldname>
 			<destination>
 			<field>fscode</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -602,10 +646,10 @@ class corebos_fsi {
 				$fsworkflow = new VTWorkflowManager($adb);
 					$fswflow = $fsworkflow->newWorkFlow('Invoice');
 					$fswflow->description = "Create Invoice on FacturaScripts";
-					$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
+					$fswflow->executionCondition = VTWorkflowManager::$MANUAL;
 					$fswflow->defaultworkflow = 1;
 					$fsworkflow->save($fswflow);
-
+					$fswflow->test='';
 					$fstm = new VTTaskManager($adb);
 					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
 					$fstask->active=true;
@@ -692,13 +736,23 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
+			<field>
+			<fieldname>codfacturacliente</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID></OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
 			</fields>
 				
 			<Response>
 			<field>
-			<fieldname>data.codinvoice</fieldname>
+			<fieldname>data.codfacturacliente</fieldname>
 			<destination>
-			<field>fscode</field>
+			<field></field>
 			</destination>
 			</field>
 			</Response>
@@ -714,6 +768,7 @@ class corebos_fsi {
 					$fswflow->description = "Update Invoice on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -806,9 +861,15 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codinventorydetail</fieldname>
+			<fieldname>data.codlineafacturacliente</fieldname>
 			<destination>
 			<field>fscode</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -824,6 +885,7 @@ class corebos_fsi {
 					$fswflow->description = "Create Invoice Lines on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -912,13 +974,23 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
+			<field>
+			<fieldname>codlineafacturacliente</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID></OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
 			</fields>
 				
 			<Response>
 			<field>
-			<fieldname>data.codinventorydetail</fieldname>
+			<fieldname>data.codlineafacturacliente</fieldname>
 			<destination>
-			<field>fscode</field>
+			<field></field>
 			</destination>
 			</field>
 			</Response>
@@ -934,6 +1006,7 @@ class corebos_fsi {
 					$fswflow->description = "Update Invoice Lines on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -1026,9 +1099,15 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codvendor</fieldname>
+			<fieldname>data.codproveedore</fieldname>
 			<destination>
 			<field>fscode</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -1044,6 +1123,7 @@ class corebos_fsi {
 					$fswflow->description = "Create Vendors on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -1132,13 +1212,23 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
+			<field>
+			<fieldname>codproveedore</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID></OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
 			</fields>
 				
 			<Response>
 			<field>
-			<fieldname>data.codvendor</fieldname>
+			<fieldname>data.codproveedore</fieldname>
 			<destination>
-			<field>fscode</field>
+			<field></field>
 			</destination>
 			</field>
 			</Response>
@@ -1154,6 +1244,7 @@ class corebos_fsi {
 					$fswflow->description = "Update Vendors on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -1246,9 +1337,15 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codproduct</fieldname>
+			<fieldname>data.codproducto</fieldname>
 			<destination>
 			<field>fscode</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -1264,6 +1361,7 @@ class corebos_fsi {
 					$fswflow->description = "Create Products on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -1352,13 +1450,23 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
+			<field>
+			<fieldname>codproducto</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID></OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
 			</fields>
 				
 			<Response>
 			<field>
-			<fieldname>data.codproduct</fieldname>
+			<fieldname>data.codproducto</fieldname>
 			<destination>
-			<field>fscode</field>
+			<field></field>
 			</destination>
 			</field>
 			</Response>
@@ -1374,6 +1482,7 @@ class corebos_fsi {
 					$fswflow->description = "Update Products on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -1466,9 +1575,15 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codservice</fieldname>
+			<fieldname>data.codproducto</fieldname>
 			<destination>
 			<field>fscode</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -1484,6 +1599,7 @@ class corebos_fsi {
 					$fswflow->description = "Create Services on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -1572,13 +1688,23 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
+			<field>
+			<fieldname>codproducto</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID></OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
 			</fields>
 				
 			<Response>
 			<field>
-			<fieldname>data.codservice</fieldname>
+			<fieldname>data.codproducto</fieldname>
 			<destination>
-			<field>fscode</field>
+			<field></field>
 			</destination>
 			</field>
 			</Response>
@@ -1594,6 +1720,7 @@ class corebos_fsi {
 					$fswflow->description = "Update Services on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -1686,9 +1813,15 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codpurchaseorder</fieldname>
+			<fieldname>data.codfacturaproveedore</fieldname>
 			<destination>
 			<field>fscode</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -1702,8 +1835,9 @@ class corebos_fsi {
 				$fsworkflow = new VTWorkflowManager($adb);
 					$fswflow = $fsworkflow->newWorkFlow('PurchaseOrder');
 					$fswflow->description = "Create PurchaseOrder on FacturaScripts";
-					$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
+					$fswflow->executionCondition = VTWorkflowManager::$MANUAL;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -1792,13 +1926,23 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
+			<field>
+			<fieldname>codfacturaproveedore</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID></OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
 			</fields>
 				
 			<Response>
 			<field>
-			<fieldname>data.codpurchaseorder</fieldname>
+			<fieldname>data.codfacturaproveedore</fieldname>
 			<destination>
-			<field>fscode</field>
+			<field></field>
 			</destination>
 			</field>
 			</Response>
@@ -1814,6 +1958,7 @@ class corebos_fsi {
 					$fswflow->description = "Update PurchaseOrder on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -1906,9 +2051,15 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codinventorydetail</fieldname>
+			<fieldname>data.codlineafacturaproveedore</fieldname>
 			<destination>
 			<field>fscode</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -1924,6 +2075,7 @@ class corebos_fsi {
 					$fswflow->description = "Create PurchaseOrder Lines on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->task='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
@@ -2012,13 +2164,23 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
+			<field>
+			<fieldname>codlineafacturaproveedore</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID></OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
 			</fields>
 				
 			<Response>
 			<field>
-			<fieldname>data.codinventorydetail</fieldname>
+			<fieldname>data.codlineafacturaproveedore</fieldname>
 			<destination>
-			<field>fscode</field>
+			<field></field>
 			</destination>
 			</field>
 			</Response>
@@ -2034,6 +2196,7 @@ class corebos_fsi {
 					$fswflow->description = "Update PurchaseOrder Lines on FacturaScripts";
 					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
 					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
 					$fsworkflow->save($fswflow);
 
 					$fstm = new VTTaskManager($adb);
