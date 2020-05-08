@@ -45,7 +45,7 @@ class fscriptscodfields extends cbupdaterWorker {
                     'typeofdata'=>'V~O',
                     'uitype'=>'1',
                     'displaytype'=>'1',
-                    'label'=>'Synced With FS',
+                    'label'=>'Result of sync with FS',
                     'massedit' => 0,
                 ),
 			);

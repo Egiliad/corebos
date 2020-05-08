@@ -182,6 +182,14 @@ class corebos_fsi {
 				$fstask->bmapid =$bruleId;
 				$fstask->bmapid_display = $rec['mapname'];
 				$fstm->saveTask($fstask);
+				//Task to update checkbox
+				$tmanager = new VTTaskManager($adb);
+				$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+				$task->summary = 'Update Checkbox';
+				$task->active=true;
+				$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+				$task->launchrelwf = '';
+				$tmanager->saveTask($task);
 		}
 		//update Account record
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Update Accounts' AND targetname='Accounts'");
@@ -300,6 +308,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		//Sync Contacts with facturascripts
@@ -415,6 +431,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		//update contact record
@@ -534,6 +558,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 
@@ -657,6 +689,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Update Invoice record
@@ -778,6 +818,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Sync Invoice Lines(InventoryDetails) record with facturascript
@@ -895,6 +943,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Update Invoice Lines(InventoryDetails) record
@@ -1016,6 +1072,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Sync Vendors record with facturascript
@@ -1133,6 +1197,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Update Vendors record
@@ -1254,6 +1326,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Sync Products record with facturascript
@@ -1371,6 +1451,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Update Products record
@@ -1492,6 +1580,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Sync Services record with facturascript
@@ -1609,6 +1705,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Update Services record
@@ -1730,6 +1834,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Sync PurchaseOrder record with facturascript
@@ -1847,6 +1959,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Update PurchaseOrder record
@@ -1968,6 +2088,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Sync PurchaseOrder Lines(InventoryDetails) record with facturascript
@@ -2085,6 +2213,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 		// Update PurchaseOrder Lines(InventoryDetails) record
@@ -2206,6 +2342,14 @@ class corebos_fsi {
 					$fstask->bmapid =$bruleId;
 					$fstask->bmapid_display = $rec['mapname'];
 					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
 			}
 		}
 	}
