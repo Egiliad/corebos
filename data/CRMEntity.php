@@ -765,8 +765,11 @@ class CRMEntity {
 				} elseif ($uitype == 50) {
 					$timefmt = '';
 					if (!empty($this->column_fields[$fieldname]) && strlen($this->column_fields[$fieldname])>16) {
-						$timefmt = substr($this->column_fields[$fieldname], -2);
-						$this->column_fields[$fieldname] = substr($this->column_fields[$fieldname], 0, 16);
+						$seconds = substr($this->column_fields[$fieldname], -2);
+						if (!is_numeric($seconds)) {
+							$timefmt = $seconds;
+							$this->column_fields[$fieldname] = substr($this->column_fields[$fieldname], 0, 16);
+						}
 					}
 					if (isset($current_user->date_format) && !$ajaxSave) {
 						$fldvalue = getValidDBInsertDateTimeValue($this->column_fields[$fieldname]);
@@ -1085,7 +1088,7 @@ class CRMEntity {
 		}
 
 		if (isset($this->table_name)) {
-			$mod_index_col = $this->tab_name_index[$this->table_name];
+			$this->tab_name_index[$this->table_name];
 		}
 
 		// Lookup in cache for information
@@ -1152,6 +1155,7 @@ class CRMEntity {
 							if (!isset($this->fetched_records[$tempid]['record_id'])) {
 									$this->fetched_records[$tempid]['record_id'] = $tempid;
 									$this->fetched_records[$tempid]['record_module'] = $module;
+									$this->fetched_records[$tempid]['cbuuid'] = $adb->query_result($result['vtiger_crmentity'], $cn, 'cbuuid');
 							}
 						}
 					}
@@ -1843,10 +1847,7 @@ class CRMEntity {
 		$exclude_uitypes = array();
 
 		$tabid = getTabId($module);
-		if ($module == 'Calendar') {
-			$tabid = array('9', '16');
-		}
-		$sql = 'SELECT columnname FROM vtiger_field WHERE tabid in (' . generateQuestionMarks($tabid) . ') and vtiger_field.presence in (0,2)';
+		$sql = 'SELECT columnname FROM vtiger_field WHERE tabid=? and vtiger_field.presence in (0,2)';
 		$params = array($tabid);
 		if (count($exclude_columns) > 0) {
 			$sql .= ' AND columnname NOT IN (' . generateQuestionMarks($exclude_columns) . ')';

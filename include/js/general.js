@@ -1373,7 +1373,6 @@ function runBAScript(scripturi) {
 }
 
 function runBAWorkflow(workflowid, crmids) {
-	VtigerJS_DialogBox.block();
 	if (typeof workflowid == undefined || workflowid == '') {
 		return false;
 	}
@@ -1386,6 +1385,7 @@ function runBAWorkflow(workflowid, crmids) {
 	if (typeof crmids == undefined || crmids == '') {
 		return false;
 	}
+	VtigerJS_DialogBox.block();
 	ExecuteFunctions('execwf', 'wfid='+workflowid+'&ids='+crmids).then(function (data) {
 		if (data) {
 			ldsPrompt.show(alert_arr.Okay, alert_arr.Okay, 'success');
@@ -3304,6 +3304,12 @@ var ActivityReminder_Deactivated = 0;
 GlobalVariable_getVariable('Debug_ActivityReminder_Deactivated', 0, 'cbCalendar', '').then(function (response) {
 	var obj = JSON.parse(response);
 	ActivityReminder_Deactivated = obj.Debug_ActivityReminder_Deactivated;
+	ExecuteFunctions('ispermitted', 'checkmodule=Calendar&checkaction=index').then(function (response) {
+		var obj = JSON.parse(response);
+		if (obj.isPermitted == false) {
+			ActivityReminder_Deactivated = 1;
+		}
+	});
 }, function (error) {
 	ActivityReminder_Deactivated = 0;
 });

@@ -91,6 +91,8 @@ class VTFieldExpressionEvaluater {
 			'getSetting' => '__cb_getSetting',
 			'setSetting' => '__cb_setSetting',
 			'delSetting' => '__cb_delSetting',
+			'sendMessage' => '__cb_sendMessage',
+			'readMessage' => '__cb_readMessage',
 			'getCRUDMode' => '__cb_getcrudmode',
 			'isNumeric' => '__cb_is_numeric',
 			'isString' => '__cb_is_string',
@@ -102,6 +104,8 @@ class VTFieldExpressionEvaluater {
 			'allrelatedare' => '__cb_allrelatedare',
 			'add_workdays' => '__cb_add_workdays',
 			'number_format' => '__cb_number_format',
+			'min' => '__cb_min',
+			'max' => '__cb_max',
 		);
 		$this->operationsSQL = array(
 			'+'  => 'cbexpsql_add',
@@ -197,6 +201,8 @@ class VTFieldExpressionEvaluater {
 			'__cb_getcrudmode',
 			'__cb_getfromcontext',
 			'__cb_setfromcontext',
+			'__cb_min',
+			'__cb_max',
 		);
 		$this->needscontext = array(
 			'__cb_aggregation',
