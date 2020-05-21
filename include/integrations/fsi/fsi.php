@@ -699,134 +699,31 @@ class corebos_fsi {
 					$tmanager->saveTask($task);
 			}
 		}
-		// Update Invoice record
-		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Update Invoice' AND targetname='Invoice'");
+		//Send Invoice record
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Send Invoice' AND targetname='Invoice'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
-			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
 			$brules = array();
 			$default_values =  array(
 				'mapname' => '',
-				'maptype' => 'Webservice Mapping',
+				'maptype' => 'Condition Expression',
 				'targetname' => '',
 				'content' => '',
 				'description' => '',
 				'assigned_user_id' => $usrwsid,
 			);
 			$rec = $default_values;
-			$rec['mapname'] = 'FS:Update Invoice';
+			$rec['mapname'] = 'FS:Send Invoice';
 			$rec['targetname'] = 'Invoice';
-			$rec['content'] = '<map>
-			<originmodule>
-			<originname>Invoice</originname>
-			</originmodule>
-				
-			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
-			<wshttpmethod>PUT</wshttpmethod>
-			<methodname>facturaclientes</methodname>
-			<wsresponsetime></wsresponsetime>
-			<wsuser></wsuser>
-			<wspass></wspass>
-			<wsheader>
-			<header> 
-			<keyname>Content-type</keyname> 
-			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
-			</header>
-			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
-			</header>
-			</wsheader>
-			<wstype>REST</wstype>
-			<inputtype>JSON</inputtype>
-			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
-			<fields>
-			<field>
-			<fieldname>nombre</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>invoicename</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>email</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>cifnif</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>codfacturacliente</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>fscode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			</fields>
-				
-			<Response>
-			<field>
-			<fieldname>data.codfacturacliente</fieldname>
-			<destination>
-			<field></field>
-			</destination>
-			</field>
-			</Response>
-			</map>';
+			$rec['content'] = "<map>
+			<expression>if fssynced == '0' then 1 else 0 end</expression>
+			</map>";
 			$brule = vtws_create('cbMap', $rec, $current_user);
 			$idComponents = vtws_getIdComponents($brule['id']);
-			$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
-			$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Update Invoice on FacturaScripts' and module_name='Invoice'");
-			if ($fswfres && $adb->num_rows($fswfres)>0) {
-			} else {
-				$fsworkflow = new VTWorkflowManager($adb);
-					$fswflow = $fsworkflow->newWorkFlow('Invoice');
-					$fswflow->description = "Update Invoice on FacturaScripts";
-					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
-					$fswflow->defaultworkflow = 1;
-					$fswflow->test='';
-					$fsworkflow->save($fswflow);
-
-					$fstm = new VTTaskManager($adb);
-					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
-					$fstask->active=true;
-					$fstask->summary = "Update Invoice on FacturaScripts";
-					$fstask->bmapid =$bruleId;
-					$fstask->bmapid_display = $rec['mapname'];
-					$fstm->saveTask($fstask);
-					//Task to update checkbox
-					$tmanager = new VTTaskManager($adb);
-					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
-					$task->summary = 'Update Checkbox';
-					$task->active=true;
-					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
-					$task->launchrelwf = '';
-					$tmanager->saveTask($task);
-			}
+			$baruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			BusinessActions::addLink(getTabid('Invoice'), 'DETAILVIEWBASIC', 'Send Invoice to FS', 'javascript:runBAScript(\'index.php?module=Invoice&action=InvoiceAjax&file=syncrecods&ids=$RECORD$\')', '', 0, null, false, $baruleId);
+			// BusinessActions::addLink(getTabid('Invoice'), 'DETAILVIEWBASIC', 'Send Invoice to FS', 'javascript:runBAWorkflow('.$fswflow->id.', $RECORD$);', '', 0, null, false, $baruleId);
 		}
 		// Sync Invoice Lines(InventoryDetails) record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Invoice Lines' AND targetname='InventoryDetails'");
@@ -931,7 +828,7 @@ class corebos_fsi {
 				$fsworkflow = new VTWorkflowManager($adb);
 					$fswflow = $fsworkflow->newWorkFlow('InventoryDetails');
 					$fswflow->description = "Create Invoice Lines on FacturaScripts";
-					$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
+					$fswflow->executionCondition = VTWorkflowManager::$MANUAL;
 					$fswflow->defaultworkflow = 1;
 					$fswflow->test='';
 					$fsworkflow->save($fswflow);
@@ -953,134 +850,31 @@ class corebos_fsi {
 					$tmanager->saveTask($task);
 			}
 		}
-		// Update Invoice Lines(InventoryDetails) record
-		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Update Invoice Lines' AND targetname='InventoryDetails'");
+		//Send Invoice lines record
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Send Invoice Line' AND targetname='InventoryDetails'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
-			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
 			$brules = array();
 			$default_values =  array(
 				'mapname' => '',
-				'maptype' => 'Webservice Mapping',
+				'maptype' => 'Condition Expression',
 				'targetname' => '',
 				'content' => '',
 				'description' => '',
 				'assigned_user_id' => $usrwsid,
 			);
 			$rec = $default_values;
-			$rec['mapname'] = 'FS:Update Invoice Lines';
+			$rec['mapname'] = 'FS:Send Invoice lines';
 			$rec['targetname'] = 'InventoryDetails';
-			$rec['content'] = '<map>
-			<originmodule>
-			<originname>InventoryDetails</originname>
-			</originmodule>
-				
-			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
-			<wshttpmethod>PUT</wshttpmethod>
-			<methodname>lineafacturaclientes</methodname>
-			<wsresponsetime></wsresponsetime>
-			<wsuser></wsuser>
-			<wspass></wspass>
-			<wsheader>
-			<header> 
-			<keyname>Content-type</keyname> 
-			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
-			</header>
-			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
-			</header>
-			</wsheader>
-			<wstype>REST</wstype>
-			<inputtype>JSON</inputtype>
-			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
-			<fields>
-			<field>
-			<fieldname>nombre</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>inventorydetailname</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>email</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>cifnif</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>codlineafacturacliente</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>fscode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			</fields>
-				
-			<Response>
-			<field>
-			<fieldname>data.codlineafacturacliente</fieldname>
-			<destination>
-			<field></field>
-			</destination>
-			</field>
-			</Response>
-			</map>';
+			$rec['content'] = "<map>
+			<expression>if fssynced == '0' then 1 else 0 end</expression>
+			</map>";
 			$brule = vtws_create('cbMap', $rec, $current_user);
 			$idComponents = vtws_getIdComponents($brule['id']);
-			$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
-			$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Update Invoice Lines on FacturaScripts' and module_name='InventoryDetails'");
-			if ($fswfres && $adb->num_rows($fswfres)>0) {
-			} else {
-				$fsworkflow = new VTWorkflowManager($adb);
-					$fswflow = $fsworkflow->newWorkFlow('InventoryDetails');
-					$fswflow->description = "Update Invoice Lines on FacturaScripts";
-					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
-					$fswflow->defaultworkflow = 1;
-					$fswflow->test='';
-					$fsworkflow->save($fswflow);
-
-					$fstm = new VTTaskManager($adb);
-					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
-					$fstask->active=true;
-					$fstask->summary = "Update Invoice Lines on FacturaScripts";
-					$fstask->bmapid =$bruleId;
-					$fstask->bmapid_display = $rec['mapname'];
-					$fstm->saveTask($fstask);
-					//Task to update checkbox
-					$tmanager = new VTTaskManager($adb);
-					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
-					$task->summary = 'Update Checkbox';
-					$task->active=true;
-					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
-					$task->launchrelwf = '';
-					$tmanager->saveTask($task);
-			}
+			$baruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			BusinessActions::addLink(getTabid('InventoryDetails'), 'DETAILVIEWBASIC', 'Send Invoice lines to FS', 'javascript:runBAScript(\'index.php?module=InventoryDetails&action=InventoryDetailsAjax&file=syncrecods&ids=$RECORD$\')', '', 0, null, false, $baruleId);
+			// BusinessActions::addLink(getTabid('InventoryDetails'), 'DETAILVIEWBASIC', 'Send Invoice lines to FS', 'javascript:runBAWorkflow('.$fswflow->id.', $RECORD$);', '', 0, null, false, $baruleId);
 		}
 		// Sync Vendors record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Vendors' AND targetname='Vendors'");
@@ -1969,134 +1763,31 @@ class corebos_fsi {
 					$tmanager->saveTask($task);
 			}
 		}
-		// Update PurchaseOrder record
-		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Update PurchaseOrder' AND targetname='PurchaseOrder'");
+		//Send PO record
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Send PurchaseOrder' AND targetname='PurchaseOrder'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
-			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
 			$brules = array();
 			$default_values =  array(
 				'mapname' => '',
-				'maptype' => 'Webservice Mapping',
+				'maptype' => 'Condition Expression',
 				'targetname' => '',
 				'content' => '',
 				'description' => '',
 				'assigned_user_id' => $usrwsid,
 			);
 			$rec = $default_values;
-			$rec['mapname'] = 'FS:Update PurchaseOrder';
+			$rec['mapname'] = 'FS:Send PurchaseOrder';
 			$rec['targetname'] = 'PurchaseOrder';
-			$rec['content'] = '<map>
-			<originmodule>
-			<originname>PurchaseOrder</originname>
-			</originmodule>
-				
-			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
-			<wshttpmethod>PUT</wshttpmethod>
-			<methodname>facturaproveedores</methodname>
-			<wsresponsetime></wsresponsetime>
-			<wsuser></wsuser>
-			<wspass></wspass>
-			<wsheader>
-			<header> 
-			<keyname>Content-type</keyname> 
-			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
-			</header>
-			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
-			</header>
-			</wsheader>
-			<wstype>REST</wstype>
-			<inputtype>JSON</inputtype>
-			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
-			<fields>
-			<field>
-			<fieldname>nombre</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>purchaseordername</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>email</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>cifnif</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>codfacturaproveedore</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>fscode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			</fields>
-				
-			<Response>
-			<field>
-			<fieldname>data.codfacturaproveedore</fieldname>
-			<destination>
-			<field></field>
-			</destination>
-			</field>
-			</Response>
-			</map>';
+			$rec['content'] = "<map>
+			<expression>if fssynced == '0' then 1 else 0 end</expression>
+			</map>";
 			$brule = vtws_create('cbMap', $rec, $current_user);
 			$idComponents = vtws_getIdComponents($brule['id']);
-			$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
-			$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Update PurchaseOrder on FacturaScripts' and module_name='PurchaseOrder'");
-			if ($fswfres && $adb->num_rows($fswfres)>0) {
-			} else {
-				$fsworkflow = new VTWorkflowManager($adb);
-					$fswflow = $fsworkflow->newWorkFlow('PurchaseOrder');
-					$fswflow->description = "Update PurchaseOrder on FacturaScripts";
-					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
-					$fswflow->defaultworkflow = 1;
-					$fswflow->test='';
-					$fsworkflow->save($fswflow);
-
-					$fstm = new VTTaskManager($adb);
-					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
-					$fstask->active=true;
-					$fstask->summary = "Update PurchaseOrder on FacturaScripts";
-					$fstask->bmapid =$bruleId;
-					$fstask->bmapid_display = $rec['mapname'];
-					$fstm->saveTask($fstask);
-					//Task to update checkbox
-					$tmanager = new VTTaskManager($adb);
-					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
-					$task->summary = 'Update Checkbox';
-					$task->active=true;
-					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
-					$task->launchrelwf = '';
-					$tmanager->saveTask($task);
-			}
+			$baruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			BusinessActions::addLink(getTabid('PurchaseOrder'), 'DETAILVIEWBASIC', 'Send PurchaseOrder to FS', 'javascript:runBAScript(\'index.php?module=PurchaseOrder&action=PurchaseOrderAjax&file=syncrecods&ids=$RECORD$\')', '', 0, null, false, $baruleId);
+			// BusinessActions::addLink(getTabid('PurchaseOrder'), 'DETAILVIEWBASIC', 'Send PurchaseOrder to FS', 'javascript:runBAWorkflow('.$fswflow->id.', $RECORD$);', '', 0, null, false, $baruleId);
 		}
 		// Sync PurchaseOrder Lines(InventoryDetails) record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create PurchaseOrder Lines' AND targetname='InventoryDetails'");
@@ -2201,7 +1892,7 @@ class corebos_fsi {
 				$fsworkflow = new VTWorkflowManager($adb);
 					$fswflow = $fsworkflow->newWorkFlow('InventoryDetails');
 					$fswflow->description = "Create PurchaseOrder Lines on FacturaScripts";
-					$fswflow->executionCondition = VTWorkflowManager::$ON_FIRST_SAVE;
+					$fswflow->executionCondition = VTWorkflowManager::$MANUAL;
 					$fswflow->defaultworkflow = 1;
 					$fswflow->task='';
 					$fsworkflow->save($fswflow);
@@ -2223,134 +1914,31 @@ class corebos_fsi {
 					$tmanager->saveTask($task);
 			}
 		}
-		// Update PurchaseOrder Lines(InventoryDetails) record
-		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Update PurchaseOrder Lines' AND targetname='InventoryDetails'");
+		//Send PurchaseOrder lines record
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Send InventoryDetails' AND targetname='InventoryDetails'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
-			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
 			$brules = array();
 			$default_values =  array(
 				'mapname' => '',
-				'maptype' => 'Webservice Mapping',
+				'maptype' => 'Condition Expression',
 				'targetname' => '',
 				'content' => '',
 				'description' => '',
 				'assigned_user_id' => $usrwsid,
 			);
 			$rec = $default_values;
-			$rec['mapname'] = 'FS:Update PurchaseOrder Lines';
+			$rec['mapname'] = 'FS:Send PurchaseOrder lines';
 			$rec['targetname'] = 'InventoryDetails';
-			$rec['content'] = '<map>
-			<originmodule>
-			<originname>InventoryDetails</originname>
-			</originmodule>
-				
-			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
-			<wshttpmethod>PUT</wshttpmethod>
-			<methodname>lineafacturaproveedores</methodname>
-			<wsresponsetime></wsresponsetime>
-			<wsuser></wsuser>
-			<wspass></wspass>
-			<wsheader>
-			<header> 
-			<keyname>Content-type</keyname> 
-			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
-			</header>
-			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
-			</header>
-			</wsheader>
-			<wstype>REST</wstype>
-			<inputtype>JSON</inputtype>
-			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
-			<fields>
-			<field>
-			<fieldname>nombre</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>inventorydetailname</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>email</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>cifnif</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>codlineafacturaproveedore</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>fscode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			</fields>
-				
-			<Response>
-			<field>
-			<fieldname>data.codlineafacturaproveedore</fieldname>
-			<destination>
-			<field></field>
-			</destination>
-			</field>
-			</Response>
-			</map>';
+			$rec['content'] = "<map>
+			<expression>if fssynced == '0' then 1 else 0 end</expression>
+			</map>";
 			$brule = vtws_create('cbMap', $rec, $current_user);
 			$idComponents = vtws_getIdComponents($brule['id']);
-			$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
-			$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Update PurchaseOrder Lines on FacturaScripts' and module_name='InventoryDetails'");
-			if ($fswfres && $adb->num_rows($fswfres)>0) {
-			} else {
-				$fsworkflow = new VTWorkflowManager($adb);
-					$fswflow = $fsworkflow->newWorkFlow('InventoryDetails');
-					$fswflow->description = "Update PurchaseOrder Lines on FacturaScripts";
-					$fswflow->executionCondition = VTWorkflowManager::$ON_MODIFY;
-					$fswflow->defaultworkflow = 1;
-					$fswflow->test='';
-					$fsworkflow->save($fswflow);
-
-					$fstm = new VTTaskManager($adb);
-					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
-					$fstask->active=true;
-					$fstask->summary = "Update PurchaseOrder Lines on FacturaScripts";
-					$fstask->bmapid =$bruleId;
-					$fstask->bmapid_display = $rec['mapname'];
-					$fstm->saveTask($fstask);
-					//Task to update checkbox
-					$tmanager = new VTTaskManager($adb);
-					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
-					$task->summary = 'Update Checkbox';
-					$task->active=true;
-					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
-					$task->launchrelwf = '';
-					$tmanager->saveTask($task);
-			}
+			$baruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			BusinessActions::addLink(getTabid('InventoryDetails'), 'DETAILVIEWBASIC', 'Send PurchaseOrder lines to FS', 'javascript:runBAScript(\'index.php?module=InventoryDetails&action=InventoryDetailsAjax&file=syncrecods&ids=$RECORD$\')', '', 0, null, false, $baruleId);
+			// BusinessActions::addLink(getTabid('InventoryDetails'), 'DETAILVIEWBASIC', 'Send PurchaseOrder lines to FS', 'javascript:runBAWorkflow('.$fswflow->id.', $RECORD$);', '', 0, null, false, $baruleId);
 		}
 	}
 
