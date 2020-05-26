@@ -1,6 +1,6 @@
 <?php
 /*************************************************************************************************
- * Copyright 2016 JPL TSolucio, S.L. -- This file is a part of TSOLUCIO coreBOS Customizations.
+ * Copyright 2020 JPL TSolucio, S.L. -- This file is a part of TSOLUCIO coreBOS Customizations.
 * Licensed under the vtiger CRM Public License Version 1.1 (the "License"); you may not use this
 * file except in compliance with the License. You can redistribute it and/or modify it
 * under the terms of the License. JPL TSolucio, S.L. reserves all rights not expressly
@@ -14,7 +14,7 @@
 * at <http://corebos.org/documentation/doku.php?id=en:devel:vpl11>
 *************************************************************************************************/
 
-class cbMapAddMapTypes extends cbupdaterWorker {
+class changeWSQueryMethod extends cbupdaterWorker {
 
 	public function applyChange() {
 		global $adb;
@@ -24,31 +24,15 @@ class cbMapAddMapTypes extends cbupdaterWorker {
 		if ($this->isApplied()) {
 			$this->sendMsg('Changeset '.get_class($this).' already applied!');
 		} else {
-			$cbmaptypes = array(
-				'Record Access Control',
-				'Record Set Mapping',
-				'Module Set Mapping',
-				'ListColumns',
-				'DuplicateRelations',
-				'MasterDetailLayout',
-				'IOMap',
-				'FieldDependency',
-				'Validations',
-				'Import',
-				'RelatedPanes',
-				'FieldInfo',
-				'GlobalSearchAutocomplete',
-				'Field Set Mapping',
-				'Detail View Layout Mapping',
-				'DecisionTable',
-				'Webservice Mapping',
-				'InformationMap'
+			$this->ExecuteQuery(
+				'UPDATE vtiger_ws_operation SET handler_method=? WHERE name=? AND handler_path=? AND handler_method=?',
+				array(
+					'vtwsQueryWithTotal',
+					'query',
+					'include/Webservices/Query.php',
+					'vtws_query',
+				)
 			);
-			$moduleInstance = Vtiger_Module::getInstance('cbMap');
-			$field = Vtiger_Field::getInstance('maptype', $moduleInstance);
-			if ($field) {
-				$field->setPicklistValues($cbmaptypes);
-			}
 			$this->sendMsg('Changeset '.get_class($this).' applied!');
 			$this->markApplied();
 		}

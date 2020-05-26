@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************************
- * Copyright 2012-2020 JPL TSolucio, S.L.  --  This file is a part of coreBOS
+ * Copyright 2020 JPL TSolucio, S.L.  --  This file is a part of coreBOS.
  * You can copy, adapt and distribute the work under the "Attribution-NonCommercial-ShareAlike"
  * Vizsage Public License (the "License"). You may not use this file except in compliance with the
  * License. Roughly speaking, non-commercial users may share and modify this code, but must give credit
@@ -12,14 +12,14 @@
  * See the License for the specific language governing permissions and limitations under the
  * License terms of Creative Commons Attribution-NonCommercial-ShareAlike 3.0 (the License).
  ********************************************************************************/
+
 $operationInfo = array(
-	'name'    => 'executeBusinessAction',
-	'include' => 'include/Webservices/executeBusinessAction.php',
-	'handler' => 'executeBusinessAction',
+	'name'    => 'getModulePermissionQuery',
+	'include' => 'include/Webservices/ModulePermissionQuery.php',
+	'handler' => 'cbwsModulePermissionQuery',
 	'prelogin'=> 0,
 	'type'    => 'GET',
 	'parameters' => array(
-		array('name' => 'businessactionid', 'type' => 'String'),
-		array('name' => 'context', 'type' => 'String'),
+		array('name' => 'module', 'type' => 'String'),
 	)
 );
