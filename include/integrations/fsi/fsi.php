@@ -91,7 +91,7 @@ class corebos_fsi {
 			</originmodule>
 			
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting(fs_url)/clientes</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>clientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -103,8 +103,8 @@ class corebos_fsi {
 			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
 			</header>
 			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
@@ -114,21 +114,31 @@ class corebos_fsi {
 			
 			<fields>
 			<field>
-			<fieldname>nombre</fieldname>
+			<fieldname>codcliente</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>accountname</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>account_no</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
 			<field>
-			<fieldname>email</fieldname>
+			<fieldname>nombre</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>accountname</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>razonsocial</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>accountname</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -138,7 +148,7 @@ class corebos_fsi {
 			<Orgfields>
 			<Orgfield>
 			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -146,12 +156,6 @@ class corebos_fsi {
 			</fields>
 			
 			<Response>
-			<field>
-			<fieldname>data.codcliente</fieldname>
-			<destination>
-			<field>fscode</field>
-			</destination>
-			</field>
 			<field>
 			<fieldname>error</fieldname>
 			<destination>
@@ -214,7 +218,7 @@ class corebos_fsi {
 			</originmodule>
 				
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting(fs_url)/clientes</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>clientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -226,8 +230,8 @@ class corebos_fsi {
 			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
 			</header>
 			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
@@ -237,21 +241,31 @@ class corebos_fsi {
 				
 			<fields>
 			<field>
-			<fieldname>nombre</fieldname>
+			<fieldname>codcliente</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>accountname</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>account_no</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
 			<field>
-			<fieldname>email</fieldname>
+			<fieldname>nombre</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>accountname</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>razonsocial</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>accountname</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -261,17 +275,7 @@ class corebos_fsi {
 			<Orgfields>
 			<Orgfield>
 			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>codcliente</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>fscode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -280,9 +284,9 @@ class corebos_fsi {
 			
 			<Response>
 			<field>
-			<fieldname>data.codcliente</fieldname>
+			<fieldname>error</fieldname>
 			<destination>
-			<field></field>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -341,7 +345,7 @@ class corebos_fsi {
 			</originmodule>
 				
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting(fs_url)/clientes</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>contactos</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -353,8 +357,8 @@ class corebos_fsi {
 			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
 			</header>
 			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
@@ -364,21 +368,31 @@ class corebos_fsi {
 				
 			<fields>
 			<field>
-			<fieldname>nombre</fieldname>
+			<fieldname>codcliente</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>contactname</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>contact_no</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
 			<field>
-			<fieldname>email</fieldname>
+			<fieldname>nombre</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>firstname lastname</OrgfieldName>
+			<OrgfieldID>TEMPLATE</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>razonsocial</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>accountname</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -387,8 +401,8 @@ class corebos_fsi {
 			<fieldname>cifnif</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>B11111111</OrgfieldName>
+			<OrgfieldID>CONST</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -396,12 +410,6 @@ class corebos_fsi {
 			</fields>
 				
 			<Response>
-			<field>
-			<fieldname>data.codcontacto</fieldname>
-			<destination>
-			<field>fscode</field>
-			</destination>
-			</field>
 			<field>
 			<fieldname>error</fieldname>
 			<destination>
@@ -464,7 +472,7 @@ class corebos_fsi {
 			</originmodule>
 				
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting(fs_url)/clientes</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>contactos</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -476,8 +484,8 @@ class corebos_fsi {
 			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
 			</header>
 			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
@@ -487,21 +495,31 @@ class corebos_fsi {
 				
 			<fields>
 			<field>
-			<fieldname>nombre</fieldname>
+			<fieldname>codcliente</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>contactname</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>contact_no</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
 			<field>
-			<fieldname>email</fieldname>
+			<fieldname>nombre</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>firstname lastname</OrgfieldName>
+			<OrgfieldID>TEMPLATE</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>razonsocial</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>accountname</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -510,18 +528,8 @@ class corebos_fsi {
 			<fieldname>cifnif</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>codcontacto</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>fscode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>B11111111</OrgfieldName>
+			<OrgfieldID>CONST</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -530,9 +538,9 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codcontacto</fieldname>
+			<fieldname>error</fieldname>
 			<destination>
-			<field></field>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -572,7 +580,6 @@ class corebos_fsi {
 		// Sync Invoice record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Invoice' AND targetname='Invoice'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
 			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
@@ -594,7 +601,7 @@ class corebos_fsi {
 			</originmodule>
 				
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting(fs_url)/facturaclientes</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>facturaclientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -606,8 +613,8 @@ class corebos_fsi {
 			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
 			</header>
 			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
@@ -617,21 +624,21 @@ class corebos_fsi {
 				
 			<fields>
 			<field>
-			<fieldname>nombre</fieldname>
+			<fieldname>codigo</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>invoicename</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>invoice_no</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
 			<field>
-			<fieldname>email</fieldname>
+			<fieldname>codcliente</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>$(account_id : (Accounts) account_no) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -640,8 +647,28 @@ class corebos_fsi {
 			<fieldname>cifnif</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>$(account_id : (Accounts) siccode) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>nombrecliente</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(account_id : (Accounts) accountname) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>fecha</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>invoicedate</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -650,15 +677,9 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codfacturacliente</fieldname>
+			<fieldname>data.idfactura</fieldname>
 			<destination>
 			<field>fscode</field>
-			</destination>
-			</field>
-			<field>
-			<fieldname>error</fieldname>
-			<destination>
-			<field>fsresult</field>
 			</destination>
 			</field>
 			<field>
@@ -699,6 +720,192 @@ class corebos_fsi {
 					$tmanager->saveTask($task);
 			}
 		}
+		// Update Invoice
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Update Invoice' AND targetname='Invoice'");
+		if ($mapres && $adb->num_rows($mapres)>0) {
+		} else {
+			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
+			$brules = array();
+			$default_values =  array(
+				'mapname' => '',
+				'maptype' => 'Webservice Mapping',
+				'targetname' => '',
+				'content' => '',
+				'description' => '',
+				'assigned_user_id' => $usrwsid,
+			);
+			$rec = $default_values;
+			$rec['mapname'] = 'FS:Update Invoice';
+			$rec['targetname'] = 'Invoice';
+			$rec['content'] = '<map>
+			<originmodule>
+			<originname>Invoice</originname>
+			</originmodule>
+				
+			<wsconfig>
+			<wsurl>getSetting(fs_url)/facturaclientes/</wsurl>
+			<wshttpmethod>PUT</wshttpmethod>
+			<methodname>facturaclientes</methodname>
+			<wsresponsetime></wsresponsetime>
+			<wsuser></wsuser>
+			<wspass></wspass>
+			<wsheader>
+			<header> 
+			<keyname>Content-type</keyname> 
+			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
+			</header>
+			<header> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
+			</header>
+			</wsheader>
+			<wstype>REST</wstype>
+			<inputtype>JSON</inputtype>
+			<outputtype>JSON</outputtype> 
+			</wsconfig>
+				
+			<fields>
+			<field>
+			<fieldname>idfactura</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>codigo</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>invoice_no</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>codcliente</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(account_id : (Accounts) account_no) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>cifnif</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(account_id : (Accounts) siccode) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>nombrecliente</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(account_id : (Accounts) accountname) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>fecha</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>invoicedate</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>netosindto</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>sum_nettotal</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>neto</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>pl_net_total</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>total</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>pl_grand_total</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>totaliva</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>sum_taxtotal</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			</fields>
+				
+			<Response>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
+			</destination>
+			</field>
+			</Response>
+			</map>';
+			$brule = vtws_create('cbMap', $rec, $current_user);
+			$idComponents = vtws_getIdComponents($brule['id']);
+			$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Final step to created Invoice on FacturaScripts sending totals' and module_name='Invoice'");
+			if ($fswfres && $adb->num_rows($fswfres)>0) {
+			} else {
+				$fsworkflow = new VTWorkflowManager($adb);
+					$fswflow = $fsworkflow->newWorkFlow('Invoice');
+					$fswflow->description = "Final step to created Invoice on FacturaScripts sending totals";
+					$fswflow->executionCondition = VTWorkflowManager::$MANUAL;
+					$fswflow->defaultworkflow = 1;
+					$fsworkflow->save($fswflow);
+					$fswflow->test='';
+					$fstm = new VTTaskManager($adb);
+					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
+					$fstask->active=true;
+					$fstask->summary = "Update Invoice with totals";
+					$fstask->bmapid =$bruleId;
+					$fstask->bmapid_display = $rec['mapname'];
+					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
+			}
+		}
 		//Send Invoice record
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Send Invoice' AND targetname='Invoice'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
@@ -722,13 +929,15 @@ class corebos_fsi {
 			$brule = vtws_create('cbMap', $rec, $current_user);
 			$idComponents = vtws_getIdComponents($brule['id']);
 			$baruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			$tabid = getTabId('Invoice');
 			BusinessActions::addLink(getTabid('Invoice'), 'DETAILVIEWBASIC', 'Send Invoice to FS', 'javascript:runBAScript(\'index.php?module=Invoice&action=InvoiceAjax&file=syncrecods&ids=$RECORD$\')', '', 0, null, false, $baruleId);
+			BusinessActions::addLink($tabid, 'LISTVIEWBASIC', 'Send Invoice to FS', "javascript:runBAScriptFromListView('syncrecods', '\$MODULE\$', returnresponse)", '', 0, null, true);
+			BusinessActions::addLink($tabid, 'HEADERSCRIPT', 'Send Invoice to FS', 'include/integrations/facturascript/ReturnResponse.js', 0, '', true);
 			// BusinessActions::addLink(getTabid('Invoice'), 'DETAILVIEWBASIC', 'Send Invoice to FS', 'javascript:runBAWorkflow('.$fswflow->id.', $RECORD$);', '', 0, null, false, $baruleId);
 		}
 		// Sync InventoryDetails record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Inventory Details' AND targetname='InventoryDetails'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
 			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
@@ -750,7 +959,7 @@ class corebos_fsi {
 			</originmodule>
 				
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting(fs_url)/lineafacturaclientes</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>lineafacturaclientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -762,8 +971,8 @@ class corebos_fsi {
 			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
 			</header>
 			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
@@ -773,31 +982,80 @@ class corebos_fsi {
 				
 			<fields>
 			<field>
-			<fieldname>nombre</fieldname>
+			<fieldname>idfactura</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>inventorydetailname</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>$(related_to : (Invoice) fscode) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
 			<field>
-			<fieldname>email</fieldname>
+			<fieldname>cantidad</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>quantity</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			<field>
+			<fieldname>referencia</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(productid : (Products) productocode)</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
 			<field>
-			<fieldname>cifnif</fieldname>
+			<fieldname>descripcion</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>$(productid : (Products) productname)</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>iva</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>tax_percent</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>irpf</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>0.00</OrgfieldName>
+			<OrgfieldID>CONST</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>recargo</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>0.00</OrgfieldName>
+			<OrgfieldID>CONST</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>pvpunitario</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>listprice</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -806,7 +1064,7 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codlineafacturacliente</fieldname>
+			<fieldname>data.idlinea</fieldname>
 			<destination>
 			<field>fscode</field>
 			</destination>
@@ -853,7 +1111,6 @@ class corebos_fsi {
 		// Sync Vendors record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Vendors' AND targetname='Vendors'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
 			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
@@ -875,7 +1132,7 @@ class corebos_fsi {
 			</originmodule>
 				
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting(fs_url)/proveedores</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>proveedores</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -887,8 +1144,8 @@ class corebos_fsi {
 			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
 			</header>
 			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
@@ -898,21 +1155,31 @@ class corebos_fsi {
 				
 			<fields>
 			<field>
+			<fieldname>codproveedor</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>vendor_no</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
 			<fieldname>nombre</fieldname>
 			<Orgfields>
 			<Orgfield>
 			<OrgfieldName>vendorname</OrgfieldName>
 			<OrgfieldID></OrgfieldID>
 			</Orgfield>
-			<delimiter></delimiter>
+			<delimiter>FIELD</delimiter>
 			</Orgfields>
 			</field>
 			<field>
-			<fieldname>email</fieldname>
+			<fieldname>razonsocial</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>vendorname</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -921,21 +1188,15 @@ class corebos_fsi {
 			<fieldname>cifnif</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>B11111111</OrgfieldName>
+			<OrgfieldID>CONST</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
 			</fields>
-				
+			
 			<Response>
-			<field>
-			<fieldname>data.codproveedore</fieldname>
-			<destination>
-			<field>fscode</field>
-			</destination>
-			</field>
 			<field>
 			<fieldname>error</fieldname>
 			<destination>
@@ -978,7 +1239,6 @@ class corebos_fsi {
 		// Update Vendors record
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Update Vendors' AND targetname='Vendors'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
 			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
@@ -1000,7 +1260,7 @@ class corebos_fsi {
 			</originmodule>
 				
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting(fs_url)/proveedores</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>proveedores</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -1012,8 +1272,8 @@ class corebos_fsi {
 			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
 			</header>
 			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
@@ -1023,21 +1283,31 @@ class corebos_fsi {
 				
 			<fields>
 			<field>
+			<fieldname>codproveedor</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>vendor_no</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
 			<fieldname>nombre</fieldname>
 			<Orgfields>
 			<Orgfield>
 			<OrgfieldName>vendorname</OrgfieldName>
 			<OrgfieldID></OrgfieldID>
 			</Orgfield>
-			<delimiter></delimiter>
+			<delimiter>FIELD</delimiter>
 			</Orgfields>
 			</field>
 			<field>
-			<fieldname>email</fieldname>
+			<fieldname>razonsocial</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>vendorname</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -1046,29 +1316,19 @@ class corebos_fsi {
 			<fieldname>cifnif</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
-			</Orgfield>
-			<delimiter></delimiter>
-			</Orgfields>
-			</field>
-			<field>
-			<fieldname>codproveedore</fieldname>
-			<Orgfields>
-			<Orgfield>
-			<OrgfieldName>fscode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>B11111111</OrgfieldName>
+			<OrgfieldID>CONST</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
 			</fields>
-				
+			
 			<Response>
 			<field>
-			<fieldname>data.codproveedore</fieldname>
+			<fieldname>error</fieldname>
 			<destination>
-			<field></field>
+			<field>fsresult</field>
 			</destination>
 			</field>
 			</Response>
@@ -1107,7 +1367,6 @@ class corebos_fsi {
 		// Sync Products record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Products' AND targetname='Products'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
 			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
@@ -1232,7 +1491,6 @@ class corebos_fsi {
 		// Update Products record
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Update Products' AND targetname='Products'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
 			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
@@ -1361,7 +1619,6 @@ class corebos_fsi {
 		// Sync Services record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Services' AND targetname='Services'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
 			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
@@ -1486,7 +1743,6 @@ class corebos_fsi {
 		// Update Services record
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Update Services' AND targetname='Services'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
 			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
@@ -1615,7 +1871,6 @@ class corebos_fsi {
 		// Sync PurchaseOrder record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create PurchaseOrder' AND targetname='PurchaseOrder'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
-			// Map exist;
 		} else {
 			//create map
 			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
@@ -1637,7 +1892,7 @@ class corebos_fsi {
 			</originmodule>
 				
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting(fs_url)/facturaproveedores</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>facturaproveedores</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -1649,8 +1904,8 @@ class corebos_fsi {
 			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
 			</header>
 			<header> 
-			<keyname>token</keyname> 
-			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
@@ -1660,21 +1915,21 @@ class corebos_fsi {
 				
 			<fields>
 			<field>
-			<fieldname>nombre</fieldname>
+			<fieldname>codigo</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>purchaseordername</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>purchaseorder_no</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
 			<field>
-			<fieldname>email</fieldname>
+			<fieldname>codproveedor</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>email1</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>$(vendor_id : (Vendors) vendor_no) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -1683,8 +1938,28 @@ class corebos_fsi {
 			<fieldname>cifnif</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>siccode</OrgfieldName>
-			<OrgfieldID></OrgfieldID>
+			<OrgfieldName>B11111111 </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>nombre</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(vendor_id : (Vendors) vendorname) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>fecha</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>duedate</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -1693,7 +1968,7 @@ class corebos_fsi {
 				
 			<Response>
 			<field>
-			<fieldname>data.codfacturaproveedore</fieldname>
+			<fieldname>data.idfactura</fieldname>
 			<destination>
 			<field>fscode</field>
 			</destination>
@@ -1737,7 +2012,196 @@ class corebos_fsi {
 					$tmanager->saveTask($task);
 			}
 		}
-		//Send PO record
+		//Update PurchaseOrder
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Update PurchaseOrder' AND targetname='PurchaseOrder'");
+		if ($mapres && $adb->num_rows($mapres)>0) {
+		} else {
+			//create map
+			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
+			$brules = array();
+			$default_values =  array(
+				'mapname' => '',
+				'maptype' => 'Webservice Mapping',
+				'targetname' => '',
+				'content' => '',
+				'description' => '',
+				'assigned_user_id' => $usrwsid,
+			);
+			$rec = $default_values;
+			$rec['mapname'] = 'FS:Update PurchaseOrder';
+			$rec['targetname'] = 'PurchaseOrder';
+			$rec['content'] = '<map>
+			<originmodule>
+			<originname>PurchaseOrder</originname>
+			</originmodule>
+				
+			<wsconfig>
+			<wsurl>getSetting(fs_url)/facturaproveedores</wsurl>
+			<wshttpmethod>PUT</wshttpmethod>
+			<methodname>facturaproveedores</methodname>
+			<wsresponsetime></wsresponsetime>
+			<wsuser></wsuser>
+			<wspass></wspass>
+			<wsheader>
+			<header> 
+			<keyname>Content-type</keyname> 
+			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
+			</header>
+			<header> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting(fs_token)</keyvalue> 
+			</header>
+			</wsheader>
+			<wstype>REST</wstype>
+			<inputtype>JSON</inputtype>
+			<outputtype>JSON</outputtype> 
+			</wsconfig>
+				
+			<fields>
+			<field>
+			<fieldname>idfactura</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>fscode</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>codigo</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>purchaseorder_no</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>codproveedor</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(vendor_id : (Vendors) vendor_no) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>cifnif</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>B11111111 </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>nombre</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(vendor_id : (Vendors) vendorname) </OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>fecha</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>duedate</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			</fields>
+			<field>
+			<fieldname>netosindto</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>sum_nettotal</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>neto</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>pl_net_total</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>total</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>pl_grand_total</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>totaliva</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>sum_taxtotal</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			</fields>
+				
+			<Response>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
+			</destination>
+			</field>
+			</Response>
+			</map>';
+			$brule = vtws_create('cbMap', $rec, $current_user);
+			$idComponents = vtws_getIdComponents($brule['id']);
+			$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Final step to created PurchaseOrder on FacturaScripts sending totals' and module_name='PurchaseOrder'");
+			if ($fswfres && $adb->num_rows($fswfres)>0) {
+			} else {
+				$fsworkflow = new VTWorkflowManager($adb);
+					$fswflow = $fsworkflow->newWorkFlow('PurchaseOrder');
+					$fswflow->description = "Final step to created PurchaseOrder on FacturaScripts sending totals";
+					$fswflow->executionCondition = VTWorkflowManager::$MANUAL;
+					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
+					$fsworkflow->save($fswflow);
+
+					$fstm = new VTTaskManager($adb);
+					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
+					$fstask->active=true;
+					$fstask->summary = "Update PurchaseOrder with totals";
+					$fstask->bmapid =$bruleId;
+					$fstask->bmapid_display = $rec['mapname'];
+					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
+			}
+		}
+		//Send PurchaseOrder record
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Send PurchaseOrder' AND targetname='PurchaseOrder'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
 		} else {
@@ -1760,7 +2224,10 @@ class corebos_fsi {
 			$brule = vtws_create('cbMap', $rec, $current_user);
 			$idComponents = vtws_getIdComponents($brule['id']);
 			$baruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			$tabid = getTabId('PurchaseOrder');
 			BusinessActions::addLink(getTabid('PurchaseOrder'), 'DETAILVIEWBASIC', 'Send PurchaseOrder to FS', 'javascript:runBAScript(\'index.php?module=PurchaseOrder&action=PurchaseOrderAjax&file=syncrecods&ids=$RECORD$\')', '', 0, null, false, $baruleId);
+			BusinessActions::addLink($tabid, 'LISTVIEWBASIC', 'Send PurchaseOrder', "javascript:runBAScriptFromListView('syncrecods', '\$MODULE\$',returnresponse)", '', 0, null, true);
+			BusinessActions::addLink($tabid, 'HEADERSCRIPT', 'Send PurchaseOrder', 'include/integrations/facturascript/ReturnResponse.js', 0, '', true);
 			// BusinessActions::addLink(getTabid('PurchaseOrder'), 'DETAILVIEWBASIC', 'Send PurchaseOrder to FS', 'javascript:runBAWorkflow('.$fswflow->id.', $RECORD$);', '', 0, null, false, $baruleId);
 		}
 	}
@@ -1816,6 +2283,18 @@ class corebos_fsi {
 			}
 		}
 		$wfresquery = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Create Invoice on FacturaScripts' and module_name='Invoice'");
+		if ($wfresquery && $adb->num_rows($wfresquery)>0) {
+			$fswfid = $adb->query_result($wfresquery, 0, 0);
+			$tresquery = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$fswfid'");
+			if ($tresquery && $adb->num_rows($tresquery)>0) {
+				$taskId = $adb->query_result($tresquery, 0, 0);
+				$taskman = new VTTaskManager($adb);
+				$tasks = $taskman->retrieveTask($taskId);
+				$tasks->active = false;
+				$tm->saveTask($tasks);
+			}
+		}
+		$wfresquery = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Final step to created Invoice on FacturaScripts sending totals' and module_name='Invoice'");
 		if ($wfresquery && $adb->num_rows($wfresquery)>0) {
 			$fswfid = $adb->query_result($wfresquery, 0, 0);
 			$tresquery = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$fswfid'");
@@ -1912,6 +2391,18 @@ class corebos_fsi {
 			}
 		}
 		$wfresquery = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Create PurchaseOrder on FacturaScripts' and module_name='PurchaseOrder'");
+		if ($wfresquery && $adb->num_rows($wfresquery)>0) {
+			$fswfid = $adb->query_result($wfresquery, 0, 0);
+			$tresquery = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$fswfid'");
+			if ($tresquery && $adb->num_rows($tresquery)>0) {
+				$taskId = $adb->query_result($tresquery, 0, 0);
+				$taskman = new VTTaskManager($adb);
+				$tasks = $taskman->retrieveTask($taskId);
+				$tasks->active = false;
+				$tm->saveTask($tasks);
+			}
+		}
+		$wfresquery = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Final step to created PurchaseOrder on FacturaScripts sending totals' and module_name='PurchaseOrder'");
 		if ($wfresquery && $adb->num_rows($wfresquery)>0) {
 			$fswfid = $adb->query_result($wfresquery, 0, 0);
 			$tresquery = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$fswfid'");
