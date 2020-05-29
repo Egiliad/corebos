@@ -444,6 +444,7 @@ function getSearchingListViewEntries($focus, $module, $list_result, $navigation_
 	if ($oCv) {
 		if (isset($oCv->list_fields)) {
 			$focus->list_fields = $oCv->list_fields;
+			$focus->list_fields_name = $oCv->list_fields_name;
 		}
 	}
 	if (is_array($selectedfields) && $selectedfields != '') {
@@ -766,7 +767,7 @@ function getSearchingListViewEntries($focus, $module, $list_result, $navigation_
 								$acc_name = textlength_check($account_name);
 								$value = $acc_name;
 							}
-						} elseif (($module == 'HelpDesk' || $module == 'PriceBook' || $module == 'Quotes' || $module == 'PurchaseOrder' || $module == 'Faq') && $name == 'Product Name') {
+						} elseif (($module=='HelpDesk' || $module=='PriceBook' || $module=='Quotes' || $module=='PurchaseOrder' || $module=='Faq') && $name=='Product Name') {
 							if ($module == 'HelpDesk' || $module == 'Faq') {
 								$product_id = $adb->query_result($list_result, $i - 1, 'product_id');
 							} else {
@@ -801,7 +802,7 @@ function getSearchingListViewEntries($focus, $module, $list_result, $navigation_
 						} else {
 							$list_result_count = $i - 1;
 							$value = getValue($ui_col_array, $list_result, $fieldname, $focus, $module, $entity_id, $list_result_count, 'list', '');
-							$value = evvt_strip_html_links($value);
+							$value = evvt_strip_html_links(strip_tags($value));
 						}
 					}
 					$list_header[$name] = $value;
