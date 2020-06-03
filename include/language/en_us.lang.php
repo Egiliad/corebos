@@ -89,6 +89,7 @@ $app_strings = array(
 'LBL_CLEAR_BUTTON_KEY' => 'C',
 'LBL_SELECT_BUTTON_KEY' => 'T',
 'LBL_SAVE_BUTTON_LABEL' => 'Save',
+'LBL_SYNC_INFORMATION_BUTTON_LABEL' => 'Sync Information',
 'LBL_SAVEREPEAT_BUTTON_LABEL' => 'Save+Repeat',
 'LBL_SKIP_BUTTON_LABEL' => 'Skip',
 'LBL_GOBACK_BUTTON_LABEL' => 'Go back',

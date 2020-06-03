@@ -28,6 +28,9 @@
 				<span class="slds-checkbox--off">{'LBL_DISABLED'|@getTranslatedString:'Settings'}</span>
 			</span>
 			</label>
+		<div class="slds-m-top--large">
+			<button type="submit" class="slds-button slds-button--brand">{'LBL_SYNC_INFORMATION_BUTTON_LABEL'|@getTranslatedString:$MODULE}</button>
+		</div>
 		</div>
 		<div class="slds-form-element slds-m-top--small">
 			<label class="slds-form-element__label" for="fsurl">{'fs_url'|@getTranslatedString:$MODULE}</label>

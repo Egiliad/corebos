@@ -18,6 +18,8 @@
  *************************************************************************************************/
 include_once 'vtlib/Vtiger/Module.php';
 require_once 'include/Webservices/Create.php';
+require_once 'modules/cbMap/cbMap.php';
+require_once 'modules/com_vtiger_workflow/VTWorkflow.php';
 
 class corebos_fsi {
 	// Configuration Properties
@@ -85,13 +87,13 @@ class corebos_fsi {
 			$rec = $default_values;
 			$rec['mapname'] = 'FS:Create Accounts';
 			$rec['targetname'] = 'Accounts';
-			$rec['content'] = '<map>
+			$rec['content'] = 
+			'<map>
 			<originmodule>
 			<originname>Accounts</originname>
 			</originmodule>
-			
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/clientes</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>clientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -104,14 +106,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
 			</wsconfig>
-			
 			<fields>
 			<field>
 			<fieldname>codcliente</fieldname>
@@ -154,7 +155,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-			
 			<Response>
 			<field>
 			<fieldname>error</fieldname>
@@ -215,10 +215,9 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>Accounts</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/clientes</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>clientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -231,14 +230,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
 			</wsconfig>
-				
 			<fields>
 			<field>
 			<fieldname>codcliente</fieldname>
@@ -281,7 +279,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-			
 			<Response>
 			<field>
 			<fieldname>error</fieldname>
@@ -343,9 +340,8 @@ class corebos_fsi {
 			<originmodule>
 			<originname>Contacts</originname>
 			</originmodule>
-				
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/clientes</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>contactos</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -358,14 +354,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
+			</wsconfig>	
 			<fields>
 			<field>
 			<fieldname>codcliente</fieldname>
@@ -408,7 +403,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-				
 			<Response>
 			<field>
 			<fieldname>error</fieldname>
@@ -469,10 +463,9 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>Contacts</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/clientes</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>contactos</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -485,14 +478,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
+			</wsconfig>	
 			<fields>
 			<field>
 			<fieldname>codcliente</fieldname>
@@ -534,8 +526,7 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
-			</fields>
-				
+			</fields>	
 			<Response>
 			<field>
 			<fieldname>error</fieldname>
@@ -576,7 +567,6 @@ class corebos_fsi {
 					$tmanager->saveTask($task);
 			}
 		}
-
 		// Sync Invoice record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Invoice' AND targetname='Invoice'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
@@ -598,10 +588,9 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>Invoice</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/facturaclientes</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>facturaclientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -614,14 +603,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
+			</wsconfig>	
 			<fields>
 			<field>
 			<fieldname>codigo</fieldname>
@@ -673,8 +661,7 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
-			</fields>
-				
+			</fields>	
 			<Response>
 			<field>
 			<fieldname>data.idfactura</fieldname>
@@ -740,10 +727,9 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>Invoice</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/facturaclientes/</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>facturaclientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -756,14 +742,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
+			</wsconfig>	
 			<fields>
 			<field>
 			<fieldname>idfactura</fieldname>
@@ -865,8 +850,7 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
-			</fields>
-				
+			</fields>	
 			<Response>
 			<field>
 			<fieldname>error</fieldname>
@@ -957,9 +941,8 @@ class corebos_fsi {
 			<originmodule>
 			<originname>InventoryDetails</originname>
 			</originmodule>
-				
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/lineafacturaclientes</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>lineafacturaclientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -972,14 +955,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
+			</wsconfig>	
 			<fields>
 			<field>
 			<fieldname>idfactura</fieldname>
@@ -1000,6 +982,7 @@ class corebos_fsi {
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
+			</field>
 			<field>
 			<fieldname>referencia</fieldname>
 			<Orgfields>
@@ -1060,8 +1043,7 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
-			</fields>
-				
+			</fields>	
 			<Response>
 			<field>
 			<fieldname>data.idlinea</fieldname>
@@ -1108,6 +1090,177 @@ class corebos_fsi {
 					$tmanager->saveTask($task);
 			}
 		}
+		// Sync InventoryDetails (PurchaseOrder) record with facturascript
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Inventory Details (PurchaseOrder)' AND targetname='InventoryDetails'");
+		if ($mapres && $adb->num_rows($mapres)>0) {
+		} else {
+			//create map
+			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
+			$brules = array();
+			$default_values =  array(
+				'mapname' => '',
+				'maptype' => 'Webservice Mapping',
+				'targetname' => '',
+				'content' => '',
+				'description' => '',
+				'assigned_user_id' => $usrwsid,
+			);
+			$rec = $default_values;
+			$rec['mapname'] = 'FS:Create Inventory Details (PurchaseOrder)';
+			$rec['targetname'] = 'InventoryDetails';
+			$rec['content'] = '<map>
+			<originmodule>
+			<originname>InventoryDetails</originname>
+			</originmodule>
+			<wsconfig>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wshttpmethod>POST</wshttpmethod>
+			<methodname>lineafacturaclientes</methodname>
+			<wsresponsetime></wsresponsetime>
+			<wsuser></wsuser>
+			<wspass></wspass>
+			<wsheader>
+			<header> 
+			<keyname>Content-type</keyname> 
+			<keyvalue>application/x-www-form-urlencoded</keyvalue> 
+			</header>
+			<header> 
+			<keyname>Token</keyname> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
+			</header>
+			</wsheader>
+			<wstype>REST</wstype>
+			<inputtype>JSON</inputtype>
+			<outputtype>JSON</outputtype> 
+			</wsconfig>	
+			<fields>
+			<field>
+			<fieldname>idfactura</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(related_to : (PurchaseOrder) fscode)</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>cantidad</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>quantity</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>referencia</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(productid : (Products) productocode)</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>descripcion</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>$(productid : (Products) productname)</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>iva</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>tax_percent</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>irpf</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>0.00</OrgfieldName>
+			<OrgfieldID>CONST</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>recargo</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>0.00</OrgfieldName>
+			<OrgfieldID>CONST</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			<field>
+			<fieldname>pvpunitario</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>listprice</OrgfieldName>
+			<OrgfieldID>FIELD</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			</fields>	
+			<Response>
+			<field>
+			<fieldname>data.idlinea</fieldname>
+			<destination>
+			<field>fscode</field>
+			</destination>
+			</field>
+			<field>
+			<fieldname>error</fieldname>
+			<destination>
+			<field>fsresult</field>
+			</destination>
+			</field>
+			</Response>
+			</map>';
+			$brule = vtws_create('cbMap', $rec, $current_user);
+			$idComponents = vtws_getIdComponents($brule['id']);
+			$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Create Inventory Details (PurchaseOrder) on FacturaScripts' and module_name='InventoryDetails'");
+			if ($fswfres && $adb->num_rows($fswfres)>0) {
+			} else {
+				$fsworkflow = new VTWorkflowManager($adb);
+					$fswflow = $fsworkflow->newWorkFlow('InventoryDetails');
+					$fswflow->description = "Create Inventory Details (PurchaseOrder) on FacturaScripts";
+					$fswflow->executionCondition = VTWorkflowManager::$MANUAL;
+					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
+					$fsworkflow->save($fswflow);
+
+					$fstm = new VTTaskManager($adb);
+					$fstask = $fstm->createTask('RunWebserviceWorkflowTask', $fswflow->id);
+					$fstask->active=true;
+					$fstask->summary = "Create Inventory Details (PurchaseOrder) on FacturaScripts";
+					$fstask->bmapid =$bruleId;
+					$fstask->bmapid_display = $rec['mapname'];
+					$fstm->saveTask($fstask);
+					//Task to update checkbox
+					$tmanager = new VTTaskManager($adb);
+					$task = $tmanager->createTask('VTUpdateFieldsTask', $fswflow->id);
+					$task->summary = 'Update Checkbox';
+					$task->active=true;
+					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
+					$task->launchrelwf = '';
+					$tmanager->saveTask($task);
+			}
+		}
 		// Sync Vendors record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Vendors' AND targetname='Vendors'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
@@ -1129,10 +1282,9 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>Vendors</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/proveedores</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>proveedores</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -1145,14 +1297,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
 			</wsconfig>
-				
 			<fields>
 			<field>
 			<fieldname>codproveedor</fieldname>
@@ -1195,7 +1346,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-			
 			<Response>
 			<field>
 			<fieldname>error</fieldname>
@@ -1257,10 +1407,9 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>Vendors</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/proveedores</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>proveedores</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -1273,14 +1422,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
+			</wsconfig>	
 			<fields>
 			<field>
 			<fieldname>codproveedor</fieldname>
@@ -1323,7 +1471,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-			
 			<Response>
 			<field>
 			<fieldname>error</fieldname>
@@ -1385,8 +1532,7 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>Products</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
 			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
@@ -1407,8 +1553,7 @@ class corebos_fsi {
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
+			</wsconfig>	
 			<fields>
 			<field>
 			<fieldname>nombre</fieldname>
@@ -1441,7 +1586,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-				
 			<Response>
 			<field>
 			<fieldname>data.codproducto</fieldname>
@@ -1509,8 +1653,7 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>Products</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
 			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
@@ -1531,8 +1674,7 @@ class corebos_fsi {
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
+			</wsconfig>	
 			<fields>
 			<field>
 			<fieldname>nombre</fieldname>
@@ -1575,7 +1717,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-				
 			<Response>
 			<field>
 			<fieldname>data.codproducto</fieldname>
@@ -1637,8 +1778,7 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>Services</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
 			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
@@ -1660,7 +1800,6 @@ class corebos_fsi {
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
 			</wsconfig>
-				
 			<fields>
 			<field>
 			<fieldname>nombre</fieldname>
@@ -1693,7 +1832,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-				
 			<Response>
 			<field>
 			<fieldname>data.codproducto</fieldname>
@@ -1761,8 +1899,7 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>Services</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
 			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
@@ -1783,8 +1920,7 @@ class corebos_fsi {
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
+			</wsconfig>	
 			<fields>
 			<field>
 			<fieldname>nombre</fieldname>
@@ -1827,7 +1963,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-				
 			<Response>
 			<field>
 			<fieldname>data.codproducto</fieldname>
@@ -1890,9 +2025,8 @@ class corebos_fsi {
 			<originmodule>
 			<originname>PurchaseOrder</originname>
 			</originmodule>
-				
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/facturaproveedores</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>facturaproveedores</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -1905,14 +2039,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
 			</wsconfig>
-				
 			<fields>
 			<field>
 			<fieldname>codigo</fieldname>
@@ -1965,7 +2098,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-				
 			<Response>
 			<field>
 			<fieldname>data.idfactura</fieldname>
@@ -2033,10 +2165,9 @@ class corebos_fsi {
 			$rec['content'] = '<map>
 			<originmodule>
 			<originname>PurchaseOrder</originname>
-			</originmodule>
-				
+			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting(fs_url)/facturaproveedores</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>facturaproveedores</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -2049,14 +2180,13 @@ class corebos_fsi {
 			</header>
 			<header> 
 			<keyname>Token</keyname> 
-			<keyvalue>getSetting(fs_token)</keyvalue> 
+			<keyvalue>getSetting('.self::KEY_FSTOKEN.')</keyvalue> 
 			</header>
 			</wsheader>
 			<wstype>REST</wstype>
 			<inputtype>JSON</inputtype>
 			<outputtype>JSON</outputtype> 
-			</wsconfig>
-				
+			</wsconfig>	
 			<fields>
 			<field>
 			<fieldname>idfactura</fieldname>
@@ -2118,7 +2248,6 @@ class corebos_fsi {
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
-			</fields>
 			<field>
 			<fieldname>netosindto</fieldname>
 			<Orgfields>
@@ -2160,7 +2289,6 @@ class corebos_fsi {
 			</Orgfields>
 			</field>
 			</fields>
-				
 			<Response>
 			<field>
 			<fieldname>error</fieldname>
