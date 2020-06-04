@@ -27,7 +27,7 @@ switch ($module) {
 			$wfcreateinv = $adb->query_result($fswfres, 0, 'workflow_id');
 			foreach ($crmids as $crmid) {
 				$wsids = json_encode(array($crmid));
-				//Create purchaseorder on FS withou totals
+				//Create purchaseorder on FS without totals
 				$step1 = cbwsExecuteWorkflow($wfcreateinv, $wsids, $current_user);
 				if ($step1) {
 					$wsinv = explode('x',$crmid);
@@ -37,12 +37,13 @@ switch ($module) {
 					$WSInvDetail = vtws_getEntityId('InventoryDetails');
 					//Get Workflow id to sync inventorydetails.
 					$fsInvDwfres = $adb->pquery('SELECT workflow_id FROM com_vtiger_workflows WHERE summary=? and module_name=?',
-					 array('Create Inventory Details on FacturaScripts', 'InventoryDetails'));
+					 array('Create Inventory Details (PurchaseOrder) on FacturaScripts', 'InventoryDetails'));
 					if ($fsInvDwfres && $adb->num_rows($fsInvDwfres)>0) {
 						//Now we sync all the inventory lines.
+						$wfcreateinvdt = $adb->query_result($fsInvDwfres, 0, 'workflow_id');
 						while ($row = $adb->fetch_array($reslines)) {
 							$wsinvd = json_encode(array($WSInvDetail.'x'.$row['inventorydetailsid']));
-							$step2 = cbwsExecuteWorkflow($wfcreateinv, $wsinvd, $current_user);
+							$step2 = cbwsExecuteWorkflow($wfcreateinvdt, $wsinvd, $current_user);
 							if (!$step2) {
 								$response = 'Error when try to sync line: '.$row['sequence_no'];
 								continue;
@@ -57,6 +58,8 @@ switch ($module) {
 							} else {
 								$response = $step3;
 							}
+						} else {
+							$response = 'Error when try to execute workflow to sync inventory lines';
 						}
 					} else {
 						$response = 'Error when try to get workflow to sync inventory lines';
@@ -78,7 +81,7 @@ switch ($module) {
 			$wfcreateinv = $adb->query_result($fswfres, 0, 'workflow_id');
 			foreach ($crmids as $crmid) {
 				$wsids = json_encode(array($crmid));
-				//Create invoice on FS withou totals
+				//Create invoice on FS without totals
 				$step1 = cbwsExecuteWorkflow($wfcreateinv, $wsids, $current_user);
 				if ($step1) {
 					$wsinv = explode('x',$crmid);
@@ -109,6 +112,8 @@ switch ($module) {
 							} else {
 								$response = $step3;
 							}
+						} else {
+							$response = 'Error when try to execute workflow to sync inventory lines';
 						}
 					} else {
 						$response = 'Error when try to get workflow to sync inventory lines';
