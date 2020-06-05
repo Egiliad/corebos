@@ -11,7 +11,7 @@ $crmids = array_map(
 	},
 	$ids
 );// we convert the crmids into wsids
-$response = 0;
+$response = 'Inovice synced correctly';
 $step1 = 0;
 $step2 = 0;
 $step3 = 0;
@@ -57,8 +57,6 @@ switch ($module) {
 							$step3 = cbwsExecuteWorkflow($wfupdateinvtotals, $wsids, $current_user);
 							if (!$step3) {
 								$response = 'Error when try to execute the final step to sync PurchaseOrder with totals';
-							} else {
-								$response = $step3;
 							}
 						} else {
 							$response = 'Error when try to execute workflow to sync inventory lines';
@@ -113,8 +111,6 @@ switch ($module) {
 							$step3 = cbwsExecuteWorkflow($wfupdateinvtotals, $wsids, $current_user);
 							if (!$step3) {
 								$response = 'Error when try to execute the final step to sync Invoice with totals';
-							} else {
-								$response = $step3;
 							}
 						} else {
 							$response = 'Error when try to execute workflow to sync inventory lines';
