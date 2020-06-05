@@ -5,12 +5,12 @@ $module = $_REQUEST['module'];  // here we get Invoice or PO
 $WSmodule = vtws_getEntityId($module); // here we go to the ws_entity table to get the module WS number
 $ids = explode(';', vtlib_purify(trim($_REQUEST['ids'], ';'))); // we convert thecomma separated list of crmids into an array
 $crmids = array_map(
-    function ($id) {
-       global $WSmodule;
-       return $WSmodule.'x'.$id;
-    },
-    $ids
-  );// we convert the crmids into wsids
+	function ($id) {
+		global $WSmodule;
+		return $WSmodule.'x'.$id;
+	},
+	$ids
+);// we convert the crmids into wsids
 $response = 0;
 $step1 = 0;
 $step2 = 0;
