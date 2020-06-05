@@ -31,7 +31,7 @@ switch ($module) {
 				$step1 = cbwsExecuteWorkflow($wfcreateinv, $wsids, $current_user);
 				if ($step1) {
 					$wsinv = explode('x',$crmid);
-					$reslines = $adb->pquery("SELECT inventorydetailsid,sequence_no FROM vtiger_inventorydetails
+					$reslines = $adb->pquery("SELECT inventorydetailsid,sequence_no,tax_percent FROM vtiger_inventorydetails
 						 INNER JOIN vtiger_crmentity ON vtiger_crmentity.crmid = vtiger_inventorydetails.inventorydetailsid
 						 WHERE deleted = 0 AND related_to = ? ORDER BY sequence_no ASC", array($wsinv[1]));
 					$WSInvDetail = vtws_getEntityId('InventoryDetails');
@@ -43,7 +43,9 @@ switch ($module) {
 						$wfcreateinvdt = $adb->query_result($fsInvDwfres, 0, 'workflow_id');
 						while ($row = $adb->fetch_array($reslines)) {
 							$wsinvd = json_encode(array($WSInvDetail.'x'.$row['inventorydetailsid']));
-							$step2 = cbwsExecuteWorkflow($wfcreateinvdt, $wsinvd, $current_user);
+							$fstaxtype = getFSTaxType($row['tax_percent']);
+							$context = json_encode(array('codimpuesto' => $fstaxtype));
+							$step2 = cbwsExecuteWorkflowWithContext($wfcreateinvdt, $wsinvd, $context,$current_user);
 							if (!$step2) {
 								$response = 'Error when try to sync line: '.$row['sequence_no'];
 								continue;
@@ -85,7 +87,7 @@ switch ($module) {
 				$step1 = cbwsExecuteWorkflow($wfcreateinv, $wsids, $current_user);
 				if ($step1) {
 					$wsinv = explode('x',$crmid);
-					$reslines = $adb->pquery("SELECT inventorydetailsid,sequence_no FROM vtiger_inventorydetails
+					$reslines = $adb->pquery("SELECT inventorydetailsid,sequence_no,tax_percent FROM vtiger_inventorydetails
 						 INNER JOIN vtiger_crmentity ON vtiger_crmentity.crmid = vtiger_inventorydetails.inventorydetailsid
 						 WHERE deleted = 0 AND related_to = ? ORDER BY sequence_no ASC", array($wsinv[1]));
 					$WSInvDetail = vtws_getEntityId('InventoryDetails');
@@ -97,7 +99,9 @@ switch ($module) {
 						$wfcreateinvdt = $adb->query_result($fsInvDwfres, 0, 'workflow_id');
 						while ($row = $adb->fetch_array($reslines)) {
 							$wsinvd = json_encode(array($WSInvDetail.'x'.$row['inventorydetailsid']));
-							$step2 = cbwsExecuteWorkflow($wfcreateinvdt, $wsinvd, $current_user);
+							$fstaxtype = getFSTaxType($row['tax_percent']);
+							$context = json_encode(array('codimpuesto' => $fstaxtype));
+							$step2 = cbwsExecuteWorkflowWithContext($wfcreateinvdt, $wsinvd, $context,$current_user);
 							if (!$step2) {
 								$response = 'Error when try to sync line: '.$row['sequence_no'];
 								continue;
@@ -126,4 +130,29 @@ switch ($module) {
 		break;
 }
 echo json_encode($response);
+
+function getFSTaxType($taxtype) {
+	$fstaxtype = '';
+	switch ($taxtype) {
+		case '21.00':
+			$fstaxtype = 'IVA21';
+			break;
+		case '10.00':
+			$fstaxtype = 'IVA10';
+			break;
+		case '4.00':
+			$fstaxtype = 'IVA4';
+			break;
+		case '0.00':
+			$fstaxtype = 'IVA0';
+			break;
+		case '7.00':
+			$fstaxtype = 'IGIC7';
+			break;
+		case '3.00':
+			$fstaxtype = 'IGIC3';
+			break;
+	}
+	return $fstaxtype;
+}
 ?>
