@@ -77,6 +77,26 @@ class fscriptscodfields extends cbupdaterWorker {
 				'InventoryDetails' => array(
 					'LBL_INVENTORYDETAILS_INFORMATION' => $fscode,
 				),
+				'Users' => array(
+					'LBL_USER_FS_INFORMATION' => array(
+						'fsnick' => array(
+							'columntype'=>'varchar(50)',
+							'typeofdata'=>'V~O',
+							'uitype'=>'1',
+							'displaytype'=>'1',
+							'label'=>'FS Username',
+							'massedit' => 0,
+						),
+						'fspassword' => array(
+							'columntype'=>'varchar(50)',
+							'typeofdata'=>'V~O',
+							'uitype'=>'1',
+							'displaytype'=>'1',
+							'label'=>'FS Password',
+							'massedit' => 0,
+						),
+					),
+				),
 			);
 			$this->massCreateFields($fields);
 			$this->sendMsg('Changeset '.get_class($this).' applied!');
