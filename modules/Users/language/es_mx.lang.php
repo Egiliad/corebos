@@ -784,5 +784,7 @@ $mod_strings = array(
 'LBL_QUERY' => 'Consulta',
 'LBL_FORE_LASTNAME' => 'Nombre o Apellido',
 'LBL_NO_LDAP_MATCHES' => 'No se han encontrado usuarios en el servidor LDAP!',
+// FACTURASCRIPTS INTEGRATION
+'LBL_USER_FS_INFORMATION' => 'Datos de acceso FS',
 );
 ?>
