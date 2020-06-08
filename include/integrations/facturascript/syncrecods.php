@@ -1,5 +1,6 @@
 <?php
 include_once 'include/Webservices/ExecuteWorkflow.php';
+require_once 'Smarty_setup.php';
 global $current_user,$log,$adb;
 $module = $_REQUEST['module'];  // here we get Invoice or PO
 $WSmodule = vtws_getEntityId($module); // here we go to the ws_entity table to get the module WS number
@@ -11,7 +12,8 @@ $crmids = array_map(
 	},
 	$ids
 );// we convert the crmids into wsids
-$response = getTranslatedString('Invoice_synced_correct', 'Invoice');
+
+$response = '';
 $step1 = 0;
 $step2 = 0;
 $step3 = 0;
@@ -125,7 +127,14 @@ switch ($module) {
 		}
 		break;
 }
-echo json_encode($response);
+if ($response == '') {
+	$smarty = new vtigerCRM_Smarty();
+	$smarty->assign('ERROR_MESSAGE_CLASS', 'cb-alert-success');
+	$smarty->assign('ERROR_MESSAGE', getTranslatedString('Invoice_synced_correct', 'Invoice'));
+	echo'%%%MSG%%%'.$smarty->fetch('applicationmessage.tpl');
+} else {
+	echo json_encode($response);
+}
 
 function getFSTaxType($taxtype) {
 	$fstaxtype = '';
