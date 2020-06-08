@@ -1123,9 +1123,9 @@ class corebos_fsi {
 			<originname>InventoryDetails</originname>
 			</originmodule>
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/lineafacturaproveedores</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
-			<methodname>lineafacturaclientes</methodname>
+			<methodname>lineafacturaproveedores</methodname>
 			<wsresponsetime></wsresponsetime>
 			<wsuser></wsuser>
 			<wspass></wspass>
