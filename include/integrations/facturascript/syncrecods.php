@@ -11,7 +11,7 @@ $crmids = array_map(
 	},
 	$ids
 );// we convert the crmids into wsids
-$response = 'Inovice synced correctly';
+$response = getTranslatedString('Invoice_synced_correct', 'Invoice');
 $step1 = 0;
 $step2 = 0;
 $step3 = 0;
@@ -47,7 +47,7 @@ switch ($module) {
 							$context = json_encode(array('codimpuesto' => $fstaxtype));
 							$step2 = cbwsExecuteWorkflowWithContext($wfcreateinvdt, $wsinvd, $context,$current_user);
 							if (!$step2) {
-								$response = 'Error when try to sync line: '.$row['sequence_no'];
+								$response = getTranslatedString('Error_when_sync_line', 'PurchaseOrder').$row['sequence_no'];
 								continue;
 							}
 						}
@@ -56,16 +56,16 @@ switch ($module) {
 							$wfupdateinvtotals = $adb->query_result($fswfuptres, 0, 'workflow_id');
 							$step3 = cbwsExecuteWorkflow($wfupdateinvtotals, $wsids, $current_user);
 							if (!$step3) {
-								$response = 'Error when try to execute the final step to sync PurchaseOrder with totals';
+								$response = getTranslatedString('Error_when_sync_purchaseorder_with_total', 'PurchaseOrder');
 							}
 						} else {
-							$response = 'Error when try to execute workflow to sync inventory lines';
+							$response = getTranslatedString('Error_when_sync_Inventory_Line_PurchaseOrder', 'PurchaseOrder');
 						}
 					} else {
-						$response = 'Error when try to get workflow to sync inventory lines';
+						$response = getTranslatedString('Error_when_get_workflow_sync_Inventory_PurchaseOrder', 'PurchaseOrder');
 					}
 				} else {
-					$response = 'Error when try to create PurchaseOrder without totals';
+					$response = getTranslatedString('Error_when_create_PurchaseOrder_without_total', 'PurchaseOrder');
 				}
 			}
 		}
@@ -101,7 +101,7 @@ switch ($module) {
 							$context = json_encode(array('codimpuesto' => $fstaxtype));
 							$step2 = cbwsExecuteWorkflowWithContext($wfcreateinvdt, $wsinvd, $context,$current_user);
 							if (!$step2) {
-								$response = 'Error when try to sync line: '.$row['sequence_no'];
+								$response = getTranslatedString('Error_when_sync_line', 'Invoice').$row['sequence_no'];
 								continue;
 							}
 						}
@@ -110,16 +110,16 @@ switch ($module) {
 							$wfupdateinvtotals = $adb->query_result($fswfuptres, 0, 'workflow_id');
 							$step3 = cbwsExecuteWorkflow($wfupdateinvtotals, $wsids, $current_user);
 							if (!$step3) {
-								$response = 'Error when try to execute the final step to sync Invoice with totals';
+								$response = getTranslatedString('Error_when_sync_Invoice_with_total', 'Invoice');
 							}
 						} else {
-							$response = 'Error when try to execute workflow to sync inventory lines';
+							$response = getTranslatedString('Error_when_sync_InventoryLine_line_Invoice', 'Invoice');
 						}
 					} else {
-						$response = 'Error when try to get workflow to sync inventory lines';
+						$response = getTranslatedString('Error_when_get_workflow_sync_Inventory_line_Invoice', 'Invoice');
 					}
 				} else {
-					$response = 'Error when try to create Invoice without totals';
+					$response = getTranslatedString('Error_when_create_Invoice_without_total', 'Invoice');
 				}
 			}
 		}

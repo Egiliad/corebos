@@ -682,6 +682,20 @@ $app_strings = array(
 'LBL_CREATE_MERGE_TEMPLATE'=>'Create Mail Merge templates ',
 'LBL_IMG_FORMATS'=>'(Only jpg, gif, bmp and png images)',
 
+//Added for Sync Information on syncrecords
+//For PurchaseOrder Module
+'Invoice_synced_correct' => 'Invoice synced correctly',
+'Error_when_sync_line' => 'Error when try to sync line',
+'Error_when_sync_purchaseorder_with_total' => 'Error when try to execute the final step to sync PurchaseOrder with totals',
+'Error_when_sync_InventoryLine_PurchaseOrder' => 'Error when try to execute workflow to sync inventory lines',
+'Error_when_get_workflow_sync_Inventory_line_PurchaseOrder' => 'Error when try to get workflow to sync inventory lines',
+'Error_when_create_PurchaseOrder_without_total' => 'Error when try to create PurchaseOrder without totals',
+//For Invoice Module
+'Error_when_sync_Invoice_with_total' => 'Error when try to execute the final step to sync Invoice with totals',
+'Error_when_sync_InventoryLine_line_Invoice' => 'Error when try to execute workflow to sync inventory lines',
+'Error_when_get_workflow_sync_Inventory_line_Invoice' => 'Error when try to get workflow to sync inventory lines',
+'Error_when_create_Invoice_without_total' => 'Error when try to create Invoice without totals',
+
 //Added for Taxmode in detail view of Product Details.
 'group'=>'Group',
 'individual'=>'individual',

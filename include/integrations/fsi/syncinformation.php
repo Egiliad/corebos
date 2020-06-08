@@ -16,6 +16,7 @@ require_once 'include/MemoryLimitManager/MemoryLimitManager.php';
 include_once 'include/Webservices/ExecuteWorkflow.php';
 
 class corebos_sync {
+
     public function syncInformation() {
         global $adb, $current_user;
         $manager = new MemoryLimitManager();
@@ -23,7 +24,7 @@ class corebos_sync {
         $manager->setBufferInMegaBytes(100);
         $manager->setLimitInMegaBytes($phplimit);
         $batch = 10000;
-        $modules2sync = array('Accounts','Contacts');
+        $modules2sync = array('Accounts','Vendors');
         $fssync_working = coreBOS_Settings::getSetting('fssync_working', null);
         if (is_null($fssync_working) || $fssync_working=='0') { // not working > we start
             $fssync_working = coreBOS_Settings::setSetting('fssync_working', '1');
@@ -31,33 +32,10 @@ class corebos_sync {
         } else { // working > we continue
             $fssync_startedate = coreBOS_Settings::getSetting('fssync_startedate', date('Y-m-d H:i:s'));
         }
-        function sendMsgError($msg) {
-            echo '<div class="slds-col slds-size_10-of-10"><span style="color:red">'.$msg.'</span></div>';
-        }
-        function sendMsg($msg) {
-            echo '<div class="slds-col slds-size_10-of-10">'.$msg.'</div>';
-        }
-        function getWorkflowFor($module){
-            global $adb;
-            switch($module){
-                case 'Accounts':
-                    $fswfres = $adb->pquery('SELECT workflow_id FROM com_vtiger_workflows WHERE summary=? and module_name=?',
-                    array('Update Accounts on FacturaScripts', $module));
-                    $workflowId = $adb->query_result($fswfres, 0, 0);
-                    return $workflowId;
-                break;
-                case 'Contacts':
-                    $fswfres = $adb->pquery('SELECT workflow_id FROM com_vtiger_workflows WHERE summary=? and module_name=?',
-                    array('Update Contacts on FacturaScripts', $module));
-                    $workflowId = $adb->query_result($fswfres, 0, 0);
-                    return $workflowId;
-                break;
-            }
-        }
         foreach ($modules2sync as $module) {
             $focus = CRMEntity::getInstance($module);
             $query = 'SELECT crmid FROM '.$focus->table_name.' inner join vtiger_crmentity on crmid='.$focus->table_index.' WHERE deleted=0 and modifiedtime<?';
-            $workflow = getWorkflowFor($module);
+            $workflow = $this->getWorkflowFor($module);
             $querycache = array();
             $cnt=1;
             $finished = true;
@@ -65,13 +43,13 @@ class corebos_sync {
             while ($record = $rs->fetchRow()) {
                 cbwsExecuteWorkflow($workflow, $record['crmid'], $current_user);
                 if ($cnt==$batch) {
-                    sendMsg('BATCH PROCESSED '.$cnt);
+                    $this->sendMsg('BATCH PROCESSED '.$cnt);
                 }
                 $cnt++;
                 if ($manager->isLimitReached()) {
-                    sendMsgError('This changeset HAS NOT FINISHED. You must launch it again!');
+                    $this->sendMsgError('This changeset HAS NOT FINISHED. You must launch it again!');
                     $finished = false;
-                    break;
+                    break 2;
                 }
             }
         }
@@ -79,6 +57,29 @@ class corebos_sync {
         if ($finished) {
             coreBOS_Settings::setSetting('fssync_working', '0');
         }
+    }
+    public function getWorkflowFor($module){
+        global $adb;
+        switch($module){
+            case 'Accounts':
+                $fswfres = $adb->pquery('SELECT workflow_id FROM com_vtiger_workflows WHERE summary=? and module_name=?',
+                array('Create Accounts on FacturaScripts', $module));
+                $workflowId = $adb->query_result($fswfres, 0, 0);
+                return $workflowId;
+            break;
+            case 'Vendors':
+                $fswfres = $adb->pquery('SELECT workflow_id FROM com_vtiger_workflows WHERE summary=? and module_name=?',
+                array('Create vendors on FacturaScripts', $module));
+                $workflowId = $adb->query_result($fswfres, 0, 0);
+                return $workflowId;
+            break;
+        }
+    }
+    public function sendMsgError($msg) {
+        echo '<div class="slds-col slds-size_10-of-10"><span style="color:red">'.$msg.'</span></div>';
+    }
+    public function sendMsg($msg) {
+        echo '<div class="slds-col slds-size_10-of-10">'.$msg.'</div>';
     }
 
 }
