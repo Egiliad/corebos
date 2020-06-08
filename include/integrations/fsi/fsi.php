@@ -25,11 +25,15 @@ class corebos_fsi {
 	// Configuration Properties
 	private $fsurl = '';
 	private $fstoken = '';
+    private $fssync_working = false;
+    private $fssync_startedate = '';
 
 	// Configuration Keys
 	const KEY_ISACTIVE = 'fsi_isactive';
 	const KEY_FSURL = 'fs_url';
 	const KEY_FSTOKEN = 'fs_token';
+    const KEY_FSSYNC_WORKING = 'fssync_working';
+    const KEY_FSSYNC_STARTEDATE = 'fssync_startedate';
 
 	public function __construct() {
 		$this->initGlobalScope();
@@ -61,6 +65,15 @@ class corebos_fsi {
 			'fsurl' => coreBOS_Settings::getSetting(self::KEY_FSURL, ''),
 			'fstoken' => coreBOS_Settings::getSetting(self::KEY_FSTOKEN, ''),
 		);
+	}
+	public function getWorking() {
+			$this->fssync_working = coreBOS_Settings::getSetting(self::KEY_FSSYNC_WORKING, '');
+			$this->fssync_startedate = coreBOS_Settings::getSetting(self::KEY_FSSYNC_STARTEDATE, '');
+	}
+	public function setWorking($fssync_working, $fssync_startedate) {
+				coreBOS_Settings::setSetting(self::KEY_FSSYNC_WORKING, $fssync_working);
+				coreBOS_Settings::setSetting(self::KEY_FSSYNC_STARTEDATE, $fssync_startedate);
+	
 	}
 
 	public function isActive() {

@@ -24,8 +24,6 @@ class fscriptscodfields extends cbupdaterWorker {
 			$this->sendMsg('Changeset '.get_class($this).' already applied!');
 		} else {
 			global $adb;
-			$adb->query('update vtiger_invoice set fssynced=0 where fssynced is null');
-			$adb->query('update vtiger_purchaseorder set fssynced=0 where fssynced is null');
 			$fscode = array(
 				'fscode' => array(
 					'columntype'=>'varchar(53)',
@@ -98,6 +96,8 @@ class fscriptscodfields extends cbupdaterWorker {
 					),
 				),
 			);
+			$adb->query('update vtiger_invoice set fssynced=0 where fssynced is null');
+			$adb->query('update vtiger_purchaseorder set fssynced=0 where fssynced is null');
 			$this->massCreateFields($fields);
 			$this->sendMsg('Changeset '.get_class($this).' applied!');
 			$this->markApplied();

@@ -17,6 +17,7 @@
  *  Author    : JPL TSolucio, S. L.
  *************************************************************************************************/
 include_once 'include/integrations/fsi/fsi.php';
+include_once 'include/integrations/fsi/syncinformation.php';
 
 $smarty = new vtigerCRM_Smarty();
 $fsi = new corebos_fsi();
@@ -28,6 +29,11 @@ if ($isadmin && isset($_REQUEST['fsurl'])) {
 	$fsurl = (empty($_REQUEST['fsurl']) ? '' : vtlib_purify($_REQUEST['fsurl']));
 	$fstoken = (empty($_REQUEST['fstoken']) ? '' : vtlib_purify($_REQUEST['fstoken']));
 	$result = $fsi->saveSettings($isActive, $fsurl, $fstoken);
+}
+
+if ($isadmin && isset($_REQUEST['sync_records'])) {
+    $syncr = new corebos_sync();
+    $result = $syncr->syncInformation();
 }
 $smarty->assign('TITLE_MESSAGE', getTranslatedString('FS Activation', $currentModule));
 $fsisettings = $fsi->getSettings();
