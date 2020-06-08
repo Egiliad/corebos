@@ -814,8 +814,8 @@ class corebos_fsi {
 			<fieldname>netosindto</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>sum_nettotal</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(sum_nettotal, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -824,8 +824,8 @@ class corebos_fsi {
 			<fieldname>neto</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>pl_net_total</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(pl_net_total, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -834,8 +834,8 @@ class corebos_fsi {
 			<fieldname>total</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>pl_grand_total</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(pl_grand_total, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -844,13 +844,13 @@ class corebos_fsi {
 			<fieldname>totaliva</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>sum_taxtotal</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(sum_taxtotal, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
-			</fields>	
+			</fields>
 			<Response>
 			<field>
 			<fieldname>error</fieldname>
@@ -1007,8 +1007,8 @@ class corebos_fsi {
 			<fieldname>iva</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>tax_percent</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(tax_percent, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -1037,13 +1037,23 @@ class corebos_fsi {
 			<fieldname>pvpunitario</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>listprice</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(listprice, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
-			</fields>	
+			<field>
+			<fieldname>codigoimpuesto</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>getFromContext(\'codimpuesto\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			</fields>
 			<Response>
 			<field>
 			<fieldname>data.idlinea</fieldname>
@@ -1178,8 +1188,8 @@ class corebos_fsi {
 			<fieldname>iva</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>tax_percent</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(tax_percent, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -1208,13 +1218,23 @@ class corebos_fsi {
 			<fieldname>pvpunitario</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>listprice</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(listprice, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
 			</field>
-			</fields>	
+			<field>
+			<fieldname>codigoimpuesto</fieldname>
+			<Orgfields>
+			<Orgfield>
+			<OrgfieldName>getFromContext(\'codimpuesto\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
+			</Orgfield>
+			<delimiter></delimiter>
+			</Orgfields>
+			</field>
+			</fields>
 			<Response>
 			<field>
 			<fieldname>data.idlinea</fieldname>
@@ -2252,8 +2272,8 @@ class corebos_fsi {
 			<fieldname>netosindto</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>sum_nettotal</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(sum_nettotal, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -2262,8 +2282,8 @@ class corebos_fsi {
 			<fieldname>neto</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>pl_net_total</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(pl_net_total, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -2272,8 +2292,8 @@ class corebos_fsi {
 			<fieldname>total</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>pl_grand_total</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(pl_grand_total, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
@@ -2282,8 +2302,8 @@ class corebos_fsi {
 			<fieldname>totaliva</fieldname>
 			<Orgfields>
 			<Orgfield>
-			<OrgfieldName>sum_taxtotal</OrgfieldName>
-			<OrgfieldID>FIELD</OrgfieldID>
+			<OrgfieldName>number_format(sum_taxtotal, \'2\', \'.\', \'\')</OrgfieldName>
+			<OrgfieldID>EXPRESSION</OrgfieldID>
 			</Orgfield>
 			<delimiter></delimiter>
 			</Orgfields>
