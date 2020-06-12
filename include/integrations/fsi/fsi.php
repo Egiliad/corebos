@@ -332,6 +332,89 @@ class corebos_fsi {
 					$tmanager->saveTask($task);
 			}
 		}
+		//RAC Hide the Delete Button on Accounts DetailView
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Condition Map for Accounts' AND targetname='Accounts'");
+		if ($mapres && $adb->num_rows($mapres)>0) {
+		} else {
+			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
+			$brules = array();
+			$default_values =  array(
+				'mapname' => '',
+				'maptype' => 'Condition Expression',
+				'targetname' => '',
+				'content' => '',
+				'description' => '',
+				'assigned_user_id' => $usrwsid,
+			);
+			$rec = $default_values;
+			$rec['mapname'] = 'FS:Condition Map for Accounts';
+			$rec['targetname'] = 'Accounts';
+			$rec['content'] = "<map>
+			<expression>if fssynced == '0' then 1 else 0 end</expression>
+			</map>";
+			$brule = vtws_create('cbMap', $rec, $current_user);
+			$idComponents = vtws_getIdComponents($brule['id']);
+			$cbMapID = isset($idComponents[1]) ? $idComponents[1] : 0;
+			//RAC Map
+			$mapquery = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='RAC Hide the Delete Button' AND targetname='Accounts'");
+			if ($mapquery && $adb->num_rows($mapquery)>0) {
+			} else {
+				$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
+				$brules = array();
+				$default_values =  array(
+					'mapname' => '',
+					'maptype' => 'Record Access Control',
+					'targetname' => '',
+					'content' => '',
+					'description' => '',
+					'assigned_user_id' => $usrwsid,
+				);
+				$rec = $default_values;
+				$rec['mapname'] = 'RAC Hide the Delete Button';
+				$rec['targetname'] = 'Accounts';
+				$rec['content'] = "<map>
+				<originmodule>
+				<originname>Accounts</originname>
+				</originmodule>
+				<listview>
+				<d>0</d>  
+				<condition>
+				<businessrule>$cbMapID</businessrule>
+				<d>0</d> 
+				</condition>
+				</listview>
+				<detailview>
+				<d>0</d>  
+				<condition>
+				<businessrule>$cbMapID</businessrule>
+				<d>0</d>  
+				</condition>
+				</detailview>
+				</map>";
+				$brule = vtws_create('cbMap', $rec, $current_user);
+				$idComponents = vtws_getIdComponents($brule['id']);
+				$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+				$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='RAC Hide the Delete Button' and module_name='Accounts'");
+				if ($fswfres && $adb->num_rows($fswfres)>0) {
+					//workflow exist
+				} else {
+					$fsworkflow = new VTWorkflowManager($adb);
+						$fswflow = $fsworkflow->newWorkFlow('Accounts');
+						$fswflow->description = "RAC Hide the Delete Button";
+						$fswflow->executionCondition = VTWorkflowManager::$RECORD_ACCESS_CONTROL;
+						$fswflow->defaultworkflow = 1;
+						$fswflow->test='';
+						$fsworkflow->save($fswflow);
+						$fstm = new VTTaskManager($adb);
+						$fstask = $fstm->createTask('CBSelectcbMap', $fswflow->id);
+						$fstask->active=true;
+						$fstask->summary = "RAC Hide the Delete Button";
+						$fstask->bmapid =$bruleId;
+						$fstask->bmapid_display = $rec['mapname'];
+						$fstm->saveTask($fstask);
+				}
+			}
+		}
 		//Sync Contacts with facturascripts
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Contacts' AND targetname='Contacts'");
 		if ($mapres && $adb->num_rows($mapres)>0) {
@@ -931,6 +1014,68 @@ class corebos_fsi {
 			BusinessActions::addLink($tabid, 'LISTVIEWBASIC', 'Send Invoice to FS', "javascript:runBAScriptFromListView('syncrecods', '\$MODULE\$', returnresponse)", '', 0, null, true);
 			BusinessActions::addLink($tabid, 'HEADERSCRIPT', 'Send Invoice to FS', 'include/integrations/facturascript/ReturnResponse.js', 0, '', true);
 			// BusinessActions::addLink(getTabid('Invoice'), 'DETAILVIEWBASIC', 'Send Invoice to FS', 'javascript:runBAWorkflow('.$fswflow->id.', $RECORD$);', '', 0, null, false, $baruleId);
+		}
+		//RAC Hide the Delete Button on Invoice Module
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Send Invoice' AND targetname='Invoice'");
+		$cbMapID = $adb->query_result($mapres, 0, 0);
+		//RAC Map
+		$mapquery = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='RAC Hide the Delete Button' AND targetname='Invoice'");
+		if ($mapquery && $adb->num_rows($mapquery)>0) {
+		} else {
+			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
+			$brules = array();
+			$default_values =  array(
+				'mapname' => '',
+				'maptype' => 'Record Access Control',
+				'targetname' => '',
+				'content' => '',
+				'description' => '',
+				'assigned_user_id' => $usrwsid,
+			);
+			$rec = $default_values;
+			$rec['mapname'] = 'RAC Hide the Delete Button';
+			$rec['targetname'] = 'Invoice';
+			$rec['content'] = "<map>
+			<originmodule>
+			<originname>Invoice</originname>
+			</originmodule>
+			<listview>
+			<d>0</d>  
+			<condition>
+			<businessrule>$cbMapID</businessrule>
+			<d>0</d> 
+			</condition>
+			</listview>
+			<detailview>
+			<d>0</d>  
+			<condition>
+			<businessrule>$cbMapID</businessrule>
+			<d>0</d>  
+			</condition>
+			</detailview>
+			</map>";
+			$brule = vtws_create('cbMap', $rec, $current_user);
+			$idComponents = vtws_getIdComponents($brule['id']);
+			$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='RAC Hide the Delete Button' and module_name='Invoice'");
+			if ($fswfres && $adb->num_rows($fswfres)>0) {
+				//workflow exist
+			} else {
+				$fsworkflow = new VTWorkflowManager($adb);
+					$fswflow = $fsworkflow->newWorkFlow('Invoice');
+					$fswflow->description = "RAC Hide the Delete Button";
+					$fswflow->executionCondition = VTWorkflowManager::$RECORD_ACCESS_CONTROL;
+					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
+					$fsworkflow->save($fswflow);
+					$fstm = new VTTaskManager($adb);
+					$fstask = $fstm->createTask('CBSelectcbMap', $fswflow->id);
+					$fstask->active=true;
+					$fstask->summary = "RAC Hide the Delete Button";
+					$fstask->bmapid =$bruleId;
+					$fstask->bmapid_display = $rec['mapname'];
+					$fstm->saveTask($fstask);
+			}
 		}
 		// Sync InventoryDetails record with facturascript
 		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Create Inventory Details' AND targetname='InventoryDetails'");
@@ -1542,6 +1687,89 @@ class corebos_fsi {
 					$task->field_value_mapping ='[{"fieldname":"fssynced","valuetype":"expression","value":"if fsresult==\'\' then 1 else 0 end"}]';
 					$task->launchrelwf = '';
 					$tmanager->saveTask($task);
+			}
+		}
+		//RAC Hide the Delete Button on Vendors DetailView
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Condition Map for Vendors' AND targetname='Vendors'");
+		if ($mapres && $adb->num_rows($mapres)>0) {
+		} else {
+			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
+			$brules = array();
+			$default_values =  array(
+				'mapname' => '',
+				'maptype' => 'Condition Expression',
+				'targetname' => '',
+				'content' => '',
+				'description' => '',
+				'assigned_user_id' => $usrwsid,
+			);
+			$rec = $default_values;
+			$rec['mapname'] = 'FS:Condition Map for Vendors';
+			$rec['targetname'] = 'Vendors';
+			$rec['content'] = "<map>
+			<expression>if fssynced == '0' then 1 else 0 end</expression>
+			</map>";
+			$brule = vtws_create('cbMap', $rec, $current_user);
+			$idComponents = vtws_getIdComponents($brule['id']);
+			$cbMapID = isset($idComponents[1]) ? $idComponents[1] : 0;
+			//RAC Map
+			$mapquery = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='RAC Hide the Delete Button' AND targetname='Vendors'");
+			if ($mapquery && $adb->num_rows($mapquery)>0) {
+			} else {
+				$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
+				$brules = array();
+				$default_values =  array(
+					'mapname' => '',
+					'maptype' => 'Record Access Control',
+					'targetname' => '',
+					'content' => '',
+					'description' => '',
+					'assigned_user_id' => $usrwsid,
+				);
+				$rec = $default_values;
+				$rec['mapname'] = 'RAC Hide the Delete Button';
+				$rec['targetname'] = 'Vendors';
+				$rec['content'] = "<map>
+				<originmodule>
+				<originname>Vendors</originname>
+				</originmodule>
+				<listview>
+				<d>0</d>  
+				<condition>
+				<businessrule>$cbMapID</businessrule>
+				<d>0</d> 
+				</condition>
+				</listview>
+				<detailview>
+				<d>0</d>  
+				<condition>
+				<businessrule>$cbMapID</businessrule>
+				<d>0</d>  
+				</condition>
+				</detailview>
+				</map>";
+				$brule = vtws_create('cbMap', $rec, $current_user);
+				$idComponents = vtws_getIdComponents($brule['id']);
+				$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+				$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='RAC Hide the Delete Button' and module_name='Vendors'");
+				if ($fswfres && $adb->num_rows($fswfres)>0) {
+					//workflow exist
+				} else {
+					$fsworkflow = new VTWorkflowManager($adb);
+						$fswflow = $fsworkflow->newWorkFlow('Vendors');
+						$fswflow->description = "RAC Hide the Delete Button";
+						$fswflow->executionCondition = VTWorkflowManager::$RECORD_ACCESS_CONTROL;
+						$fswflow->defaultworkflow = 1;
+						$fswflow->test='';
+						$fsworkflow->save($fswflow);
+						$fstm = new VTTaskManager($adb);
+						$fstask = $fstm->createTask('CBSelectcbMap', $fswflow->id);
+						$fstask->active=true;
+						$fstask->summary = "RAC Hide the Delete Button";
+						$fstask->bmapid =$bruleId;
+						$fstask->bmapid_display = $rec['mapname'];
+						$fstm->saveTask($fstask);
+				}
 			}
 		}
 		// Sync Products record with facturascript
@@ -2391,6 +2619,68 @@ class corebos_fsi {
 			BusinessActions::addLink($tabid, 'HEADERSCRIPT', 'Send PurchaseOrder', 'include/integrations/facturascript/ReturnResponse.js', 0, '', true);
 			// BusinessActions::addLink(getTabid('PurchaseOrder'), 'DETAILVIEWBASIC', 'Send PurchaseOrder to FS', 'javascript:runBAWorkflow('.$fswflow->id.', $RECORD$);', '', 0, null, false, $baruleId);
 		}
+		//RAC Hide the Delete Button on PurchaseOrder Module
+		$mapres = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='FS:Send PurchaseOrder' AND targetname='PurchaseOrder'");
+		$cbMapID = $adb->query_result($mapres, 0, 0);
+		//RAC Map
+		$mapquery = $adb->query("SELECT cbmapid FROM vtiger_cbmap WHERE mapname='RAC Hide the Delete Button' AND targetname='PurchaseOrder'");
+		if ($mapquery && $adb->num_rows($mapquery)>0) {
+		} else {
+			$usrwsid = vtws_getEntityId('Users').'x'.$current_user->id;
+			$brules = array();
+			$default_values =  array(
+				'mapname' => '',
+				'maptype' => 'Record Access Control',
+				'targetname' => '',
+				'content' => '',
+				'description' => '',
+				'assigned_user_id' => $usrwsid,
+			);
+			$rec = $default_values;
+			$rec['mapname'] = 'RAC Hide the Delete Button';
+			$rec['targetname'] = 'PurchaseOrder';
+			$rec['content'] = "<map>
+			<originmodule>
+			<originname>PurchaseOrder</originname>
+			</originmodule>
+			<listview>
+			<d>0</d>  
+			<condition>
+			<businessrule>$cbMapID</businessrule>
+			<d>0</d> 
+			</condition>
+			</listview>
+			<detailview>
+			<d>0</d>  
+			<condition>
+			<businessrule>$cbMapID</businessrule>
+			<d>0</d>  
+			</condition>
+			</detailview>
+			</map>";
+			$brule = vtws_create('cbMap', $rec, $current_user);
+			$idComponents = vtws_getIdComponents($brule['id']);
+			$bruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
+			$fswfres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='RAC Hide the Delete Button' and module_name='PurchaseOrder'");
+			if ($fswfres && $adb->num_rows($fswfres)>0) {
+				//workflow exist
+			} else {
+				$fsworkflow = new VTWorkflowManager($adb);
+					$fswflow = $fsworkflow->newWorkFlow('PurchaseOrder');
+					$fswflow->description = "RAC Hide the Delete Button";
+					$fswflow->executionCondition = VTWorkflowManager::$RECORD_ACCESS_CONTROL;
+					$fswflow->defaultworkflow = 1;
+					$fswflow->test='';
+					$fsworkflow->save($fswflow);
+					$fstm = new VTTaskManager($adb);
+					$fstask = $fstm->createTask('CBSelectcbMap', $fswflow->id);
+					$fstask->active=true;
+					$fstask->summary = "RAC Hide the Delete Button";
+					$fstask->bmapid =$bruleId;
+					$fstask->bmapid_display = $rec['mapname'];
+					$fstm->saveTask($fstask);
+			}
+		}
 	}
 
 	public function deactivateFS() {
@@ -2408,6 +2698,18 @@ class corebos_fsi {
 			}
 		}
 		$workflowres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Update Accounts on FacturaScripts' and module_name='Accounts'");
+		if ($workflowres && $adb->num_rows($workflowres)>0) {
+			$workflowId = $adb->query_result($workflowres, 0, 0);
+			$taskres = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$workflowId'");
+			if ($taskres && $adb->num_rows($taskres)>0) {
+				$taskid = $adb->query_result($taskres, 0, 0);
+				$tm = new VTTaskManager($adb);
+				$task = $tm->retrieveTask($taskid);
+				$task->active = false;
+				$tm->saveTask($task);
+			}
+		}
+		$workflowres = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='RAC Hide the Delete Button' and module_name='Accounts'");
 		if ($workflowres && $adb->num_rows($workflowres)>0) {
 			$workflowId = $adb->query_result($workflowres, 0, 0);
 			$taskres = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$workflowId'");
@@ -2467,6 +2769,18 @@ class corebos_fsi {
 				$tm->saveTask($tasks);
 			}
 		}
+		$wfresquery = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='RAC Hide the Delete Button' and module_name='Invoice'");
+		if ($wfresquery && $adb->num_rows($wfresquery)>0) {
+			$fswfid = $adb->query_result($wfresquery, 0, 0);
+			$tresquery = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$fswfid'");
+			if ($tresquery && $adb->num_rows($tresquery)>0) {
+				$taskId = $adb->query_result($tresquery, 0, 0);
+				$taskman = new VTTaskManager($adb);
+				$tasks = $taskman->retrieveTask($taskId);
+				$tasks->active = false;
+				$tm->saveTask($tasks);
+			}
+		}
 		$wfresquery = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Create Inventory Details on FacturaScripts' and module_name='InventoryDetails'");
 		if ($wfresquery && $adb->num_rows($wfresquery)>0) {
 			$fswfid = $adb->query_result($wfresquery, 0, 0);
@@ -2492,6 +2806,18 @@ class corebos_fsi {
 			}
 		}
 		$wfresquery = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Update vendors on FacturaScripts' and module_name='vendors'");
+		if ($wfresquery && $adb->num_rows($wfresquery)>0) {
+			$fswfid = $adb->query_result($wfresquery, 0, 0);
+			$tresquery = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$fswfid'");
+			if ($tresquery && $adb->num_rows($tresquery)>0) {
+				$taskId = $adb->query_result($tresquery, 0, 0);
+				$taskman = new VTTaskManager($adb);
+				$tasks = $taskman->retrieveTask($taskId);
+				$tasks->active = false;
+				$tm->saveTask($tasks);
+			}
+		}
+		$wfresquery = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='RAC Hide the Delete Button' and module_name='vendors'");
 		if ($wfresquery && $adb->num_rows($wfresquery)>0) {
 			$fswfid = $adb->query_result($wfresquery, 0, 0);
 			$tresquery = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$fswfid'");
@@ -2564,6 +2890,18 @@ class corebos_fsi {
 			}
 		}
 		$wfresquery = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='Final step to created PurchaseOrder on FacturaScripts sending totals' and module_name='PurchaseOrder'");
+		if ($wfresquery && $adb->num_rows($wfresquery)>0) {
+			$fswfid = $adb->query_result($wfresquery, 0, 0);
+			$tresquery = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$fswfid'");
+			if ($tresquery && $adb->num_rows($tresquery)>0) {
+				$taskId = $adb->query_result($tresquery, 0, 0);
+				$taskman = new VTTaskManager($adb);
+				$tasks = $taskman->retrieveTask($taskId);
+				$tasks->active = false;
+				$tm->saveTask($tasks);
+			}
+		}
+		$wfresquery = $adb->query("SELECT workflow_id FROM com_vtiger_workflows WHERE summary='RAC Hide the Delete Button' and module_name='PurchaseOrder'");
 		if ($wfresquery && $adb->num_rows($wfresquery)>0) {
 			$fswfid = $adb->query_result($wfresquery, 0, 0);
 			$tresquery = $adb->query("SELECT task_id FROM com_vtiger_workflowtasks WHERE workflow_id='$fswfid'");

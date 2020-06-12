@@ -98,6 +98,10 @@ switch ($_REQUEST['_op']) {
 	case 'setconfigelasticsearch':
 		include_once 'include/integrations/elasticsearch/settings.php';
 		break;
+	case 'getconfiglogall':
+	case 'setconfiglogall':
+		include_once 'include/integrations/logall/settings.php';
+		break;
 	default:
 		$smarty = new vtigerCRM_Smarty();
 		$titlemessage = getTranslatedString('Available Integrations', $currentModule);
@@ -161,6 +165,12 @@ switch ($_REQUEST['_op']) {
 				'title' => getTranslatedString('ElasticSearch Activation', 'Utilities'),
 				'desc' => getTranslatedString('Elasticsearch_Desc', 'Utilities'),
 				'url' => 'index.php?action=integration&module=Utilities&_op=getconfigelasticsearch',
+			),
+			array(
+				'abbr' => 'LA',
+				'title' => getTranslatedString('LogAll Activation', 'Utilities'),
+				'desc' => getTranslatedString('LogAll_Desc', 'Utilities'),
+				'url' => 'index.php?action=integration&module=Utilities&_op=getconfiglogall',
 			),
 			array(
 				'abbr' => 'FS',

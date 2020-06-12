@@ -2219,9 +2219,9 @@ function getRecordValues($id_array, $module) {
 
 	$focus = new $module();
 	if (isset($id_array) && $id_array !='') {
-		foreach ($id_array as $value_pair['disp_value']) {
-			$focus->id=$value_pair['disp_value'];
-			$focus->retrieve_entity_info($value_pair['disp_value'], $module);
+		foreach ($id_array as $crmid) {
+			$focus->id=$crmid;
+			$focus->retrieve_entity_info($crmid, $module);
 			$field_values[]=$focus->column_fields;
 		}
 	}
@@ -2255,8 +2255,7 @@ function getRecordValues($id_array, $module) {
 				} elseif ($ui_type == 10) {
 					$value_pair['disp_value'] = getRecordInfoFromID($field_values[$j][$fld_name]);
 				} elseif ($ui_type == 5 || $ui_type == 6 || $ui_type == 23) {
-					if ($field_values[$j][$fld_name] != '' && $field_values[$j][$fld_name]
-							!= '0000-00-00') {
+					if ($field_values[$j][$fld_name] != '' && $field_values[$j][$fld_name] != '0000-00-00') {
 						$date = new DateTimeField($field_values[$j][$fld_name]);
 						$value_pair['disp_value'] = $date->getDisplayDate();
 						if (strpos($field_values[$j][$fld_name], ' ') > -1) {

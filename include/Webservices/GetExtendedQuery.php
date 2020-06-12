@@ -43,7 +43,7 @@ function __FQNExtendedQueryGetQuery($q, $user) {
 	$mainModule = $meta->getTabName();  // normalize module name
 	// check modules
 	if (!$meta->isModuleEntity()) {
-		throw new WebserviceException('INVALID_MODULE', "Given main module ($mainModule) cannot be found");
+		throw new WebServiceException('INVALID_MODULE', "Given main module ($mainModule) cannot be found");
 	}
 
 	// check permission on module
@@ -68,6 +68,9 @@ function __FQNExtendedQueryGetQuery($q, $user) {
 	foreach ($queryColumns as $k => $field) {
 		if (strpos($field, '.')>0) {
 			list($m,$f) = explode('.', $field);
+			if ($m=='UsersSec') {
+				$m = 'Users';
+			}
 			if (!isset($queryRelatedModules[$m])) {
 				$relhandler = vtws_getModuleHandlerFromName($m, $user);
 				$relmeta = $relhandler->getMeta();
