@@ -35,7 +35,7 @@ class corebos_sync {
         }
         foreach ($modules2sync as $module) {
             $focus = CRMEntity::getInstance($module);
-            $query = 'SELECT crmid FROM '.$focus->table_name.' inner join vtiger_crmentity on crmid='.$focus->table_index.' WHERE deleted=0 and modifiedtime<?';
+            $query = 'SELECT crmid FROM '.$focus->table_name.' inner join vtiger_crmentity on crmid='.$focus->table_index.' WHERE deleted=0 and fssynced = 0 and modifiedtime<?';
             $workflow = $this->getWorkflowFor($module);
             $querycache = array();
             $cnt=1;
