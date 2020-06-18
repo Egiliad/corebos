@@ -28,7 +28,8 @@ class corebos_sync {
         $fssync_working = coreBOS_Settings::getSetting('fssync_working', null);
         if (is_null($fssync_working) || $fssync_working=='0') { // not working > we start
             $fssync_working = coreBOS_Settings::setSetting('fssync_working', '1');
-            $fssync_startedate = coreBOS_Settings::setSetting('fssync_startedate', date('Y-m-d H:i:s'));
+            coreBOS_Settings::setSetting('fssync_startedate', date('Y-m-d H:i:s'));
+            $fssync_startedate = coreBOS_Settings::getSetting('fssync_startedate', date('Y-m-d H:i:s'));
         } else { // working > we continue
             $fssync_startedate = coreBOS_Settings::getSetting('fssync_startedate', date('Y-m-d H:i:s'));
         }
@@ -40,8 +41,11 @@ class corebos_sync {
             $cnt=1;
             $finished = true;
             $rs = $adb->pquery($query, array($fssync_startedate));
+            $WSmodule = vtws_getEntityId($module);
             while ($record = $rs->fetchRow()) {
-                cbwsExecuteWorkflow($workflow, $record['crmid'], $current_user);
+                $wscrmid = $WSmodule.'x'.$record['crmid'];
+                $wsid = json_encode(array($wscrmid));
+                cbwsExecuteWorkflow($workflow, $wsid, $current_user);
                 if ($cnt==$batch) {
                     $this->sendMsg('BATCH PROCESSED '.$cnt);
                 }
