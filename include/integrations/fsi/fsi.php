@@ -106,7 +106,7 @@ class corebos_fsi {
 			<originname>Accounts</originname>
 			</originmodule>
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/clientes</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>clientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -230,7 +230,7 @@ class corebos_fsi {
 			<originname>Accounts</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/clientes</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>clientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -437,7 +437,7 @@ class corebos_fsi {
 			<originname>Contacts</originname>
 			</originmodule>
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/contactos</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>contactos</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -561,7 +561,7 @@ class corebos_fsi {
 			<originname>Contacts</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/contactos</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>contactos</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -686,7 +686,7 @@ class corebos_fsi {
 			<originname>Invoice</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/facturaclientes</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>facturaclientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -825,7 +825,7 @@ class corebos_fsi {
 			<originname>Invoice</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/facturaclientes</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>facturaclientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -1100,7 +1100,7 @@ class corebos_fsi {
 			<originname>InventoryDetails</originname>
 			</originmodule>
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/lineafacturaclientes</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>lineafacturaclientes</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -1462,7 +1462,7 @@ class corebos_fsi {
 			<originname>Vendors</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/proveedores</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>proveedores</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -1587,7 +1587,7 @@ class corebos_fsi {
 			<originname>Vendors</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/proveedores</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>proveedores</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -1795,7 +1795,7 @@ class corebos_fsi {
 			<originname>Products</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/productos</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>productos</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -1916,7 +1916,7 @@ class corebos_fsi {
 			<originname>Products</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/productos</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>productos</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -2041,7 +2041,7 @@ class corebos_fsi {
 			<originname>Services</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/productos</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>productos</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -2162,7 +2162,7 @@ class corebos_fsi {
 			<originname>Services</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/productos</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>productos</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -2287,7 +2287,7 @@ class corebos_fsi {
 			<originname>PurchaseOrder</originname>
 			</originmodule>
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/facturaproveedores</wsurl>
 			<wshttpmethod>POST</wshttpmethod>
 			<methodname>facturaproveedores</methodname>
 			<wsresponsetime></wsresponsetime>
@@ -2428,7 +2428,7 @@ class corebos_fsi {
 			<originname>PurchaseOrder</originname>
 			</originmodule>	
 			<wsconfig>
-			<wsurl>getSetting('.self::KEY_FSURL.')</wsurl>
+			<wsurl>getSetting('.self::KEY_FSURL.')/facturaproveedores</wsurl>
 			<wshttpmethod>PUT</wshttpmethod>
 			<methodname>facturaproveedores</methodname>
 			<wsresponsetime></wsresponsetime>
