@@ -54,6 +54,7 @@ class DefineGlobalVariables extends cbupdaterWorker {
 				'Application_DetailView_Record_Navigation',
 				'Application_DetailView_Sticky_BlockStatus',
 				'Application_DetailView_PageHeader_Message',
+				'Application_EditView_Submit_Form_WithEnter',
 				'Application_TrackerMaxHistory',
 				'Application_Announcement',
 				'Application_Display_World_Clock',
@@ -100,6 +101,7 @@ class DefineGlobalVariables extends cbupdaterWorker {
 				'Application_SendUserPasswordByEmail',
 				'Application_Pagination_Limit',
 				'Application_Popup_Address_Selection',
+				'Application_Unique_Identifier',
 
 				'Graph_DataLabels',
 				'Graph_DataLabels_Color',
@@ -243,7 +245,6 @@ class DefineGlobalVariables extends cbupdaterWorker {
 				'ip_elastic_indexprefix',
 				'esusername',
 				'espassword',
-
 			);
 			$delete_these = array(
 				'preload_prototype',
@@ -279,6 +280,8 @@ class DefineGlobalVariables extends cbupdaterWorker {
 				'SOAP_Thunderbird_Enabled',
 				'Home_Display_Empty_Blocks',
 				'Gantt_Type',
+				'sockethost',
+				'socketblockedit',
 			);
 			$rename_these = array(
 				'Show_Copy_Adress_Header' => array(

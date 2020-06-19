@@ -26,7 +26,9 @@ class cbLogAllHandler extends VTEventHandler {
 	private $expire = 30;
 
 	public function handleEvent($eventName, $entityData) {
-		global $log, $current_user;
+		global $log, $adb, $current_user;
+		include 'config.inc.php';
+		$appname = GlobalVariable::getVariable('Application_Unique_Identifier', $application_unique_key);
 		$cbmq = coreBOS_MQTM::getInstance();
 		switch ($eventName) {
 			case 'vtiger.entity.aftersave.final':
@@ -41,6 +43,7 @@ class cbLogAllHandler extends VTEventHandler {
 					'userid' => $current_user->id,
 					'doneon' => date('Y-m-d H:i:s'),
 					'donefrom' => $_SERVER['REMOTE_ADDR'],
+					'application' => $appname,
 				);
 				$freetag = new freetag();
 				$tagcloud = $freetag->get_tags_on_object($recordId);
@@ -50,7 +53,15 @@ class cbLogAllHandler extends VTEventHandler {
 						$apptags[] = $tag['tag'];
 					}
 				}
+				$webserviceObject = VtigerWebserviceObject::fromName($adb, $moduleName);
+				$handlerPath = $webserviceObject->getHandlerPath();
+				$handlerClass = $webserviceObject->getHandlerClass();
+				require_once $handlerPath;
+				$handler = new $handlerClass($webserviceObject, $current_user, $adb, $log);
+				$meta = $handler->getMeta();
 				$data = $entityData->getData();
+				unset($data['createdtime'], $data['modifiedtime'], $data['modifiedby'], $data['created_user_id']);
+				$data = DataTransform::sanitizeReferences($data, $meta, true);
 				$data['apptags'] = $apptags;
 				$msg['data'] = $data;
 				$cbmq->sendMessage($this->ladataindex, 'logall', 'logalldata', 'Message', '1:M', 1, $this->expire, 0, $current_user->id, json_encode($msg));
@@ -60,6 +71,17 @@ class cbLogAllHandler extends VTEventHandler {
 					if (is_array($delta)) {
 						unset($delta['modifiedtime']);
 						if (count($delta)) {
+							$do = $dn = array();
+							foreach ($delta as $field => $values) {
+								$do[$field] = $values['oldValue'];
+								$dn[$field] = $values['currentValue'];
+							}
+							$do = DataTransform::sanitizeReferences($do, $meta, true);
+							$dn = DataTransform::sanitizeReferences($dn, $meta, true);
+							foreach ($delta as $field => $values) {
+								$delta[$field]['oldValue'] = $do[$field];
+								$delta[$field]['currentValue'] = $dn[$field];
+							}
 							$msg['operation'] = 'Change';
 							$msg['data'] = $delta;
 							$cbmq->sendMessage($this->lachangeindex, 'logall', 'logalldata', 'Message', '1:M', 1, $this->expire, 0, $current_user->id, json_encode($msg));
@@ -79,6 +101,7 @@ class cbLogAllHandler extends VTEventHandler {
 					'userid' => $current_user->id,
 					'doneon' => date('Y-m-d H:i:s'),
 					'donefrom' => $_SERVER['REMOTE_ADDR'],
+					'application' => $appname,
 				));
 				$cbmq->sendMessage($this->ladataindex, 'logall', 'logalldata', 'Message', '1:M', 1, $this->expire, 0, $current_user->id, $msg);
 				break;
@@ -94,6 +117,7 @@ class cbLogAllHandler extends VTEventHandler {
 					'userid' => $current_user->id,
 					'doneon' => date('Y-m-d H:i:s'),
 					'donefrom' => $_SERVER['REMOTE_ADDR'],
+					'application' => $appname,
 				));
 				$cbmq->sendMessage($this->ladataindex, 'logall', 'logalldata', 'Message', '1:M', 1, $this->expire, 0, $current_user->id, $msg);
 				if (coreBOS_Settings::getSetting('audit_trail', false)) {
@@ -114,6 +138,7 @@ class cbLogAllHandler extends VTEventHandler {
 					'userid' => $current_user->id,
 					'doneon' => date('Y-m-d H:i:s'),
 					'donefrom' => $_SERVER['REMOTE_ADDR'],
+					'application' => $appname,
 				));
 				$cbmq->sendMessage($this->ladataindex, 'logall', 'logalldata', 'Message', '1:M', 1, $this->expire, 0, $current_user->id, $msg);
 				break;
@@ -131,6 +156,7 @@ class cbLogAllHandler extends VTEventHandler {
 					'userid' => $current_user->id,
 					'doneon' => date('Y-m-d H:i:s'),
 					'donefrom' => $_SERVER['REMOTE_ADDR'],
+					'application' => $appname,
 				));
 				$cbmq->sendMessage($this->ladataindex, 'logall', 'logalldata', 'Message', '1:M', 1, $this->expire, 0, $current_user->id, $msg);
 				break;
@@ -146,6 +172,7 @@ class cbLogAllHandler extends VTEventHandler {
 						'userid' => $entityData[0],
 						'doneon' => $entityData[4],
 						'donefrom' => $_SERVER['REMOTE_ADDR'],
+						'application' => $appname,
 					);
 					switch ($entityData[2]) {
 						case 'loginportal':
@@ -180,6 +207,7 @@ class cbLogAllHandler extends VTEventHandler {
 						'userid' => $uid,
 						'doneon' => $entityData[4],
 						'donefrom' => $_SERVER['REMOTE_ADDR'],
+						'application' => $appname,
 					));
 					$cbmq->sendMessage($this->laauditindex, 'logall', 'logallaudit', 'Message', '1:M', 1, $this->expire, 0, $current_user->id, $msg);
 				}
@@ -195,6 +223,7 @@ class cbLogAllHandler extends VTEventHandler {
 						'userid' => $entityData[0],
 						'doneon' => $entityData[4],
 						'donefrom' => $_SERVER['REMOTE_ADDR'],
+						'application' => $appname,
 					));
 					$cbmq->sendMessage($this->laauditindex, 'logall', 'logallaudit', 'Message', '1:M', 1, $this->expire, 0, $current_user->id, $msg);
 				}

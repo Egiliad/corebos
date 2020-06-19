@@ -46,6 +46,7 @@ class QueryGenerator {
 	private $whereClause;
 	private $query;
 	private $groupInfo;
+	private $hasUserReferenceField = false;
 	public $conditionInstanceCount;
 	private $conditionalWhere;
 	public static $AND = 'AND';
@@ -81,6 +82,7 @@ class QueryGenerator {
 		$this->manyToManyRelatedModuleConditions = array();
 		$this->conditionInstanceCount = 0;
 		$this->customViewFields = array();
+		$this->setHasUserReferenceField();
 		$this->setReferenceFields();
 	}
 
@@ -106,6 +108,15 @@ class QueryGenerator {
 		$this->query = null;
 	}
 
+	private function setHasUserReferenceField() {
+		foreach ($this->meta->getModuleFields() as $fname => $finfo) {
+			$this->hasUserReferenceField = ($finfo->getUIType()=='101');
+			if ($this->hasUserReferenceField) {
+				break;
+			}
+		}
+	}
+
 	public function setFields($fields) {
 		$this->fields = array_unique($fields);
 		$this->setReferenceFields();
@@ -114,6 +125,7 @@ class QueryGenerator {
 	// Support for reference module fields
 	public function setReferenceFields() {
 		global $current_user;
+		$userfields = array_keys($this->getOpenUserFields());
 		$this->referenceFieldNameList = array();
 		$this->referenceFields = array();
 		if (isset($this->referenceModuleField)) {
@@ -126,7 +138,7 @@ class QueryGenerator {
 				$meta = $handler->getMeta();
 				$fields = $meta->getModuleFields();
 				foreach ($fields as $fname => $finfo) {
-					if ($fname=='roleid') {
+					if ($fname=='roleid' || ($refmod=='Users' && !in_array($fname, $userfields))) {
 						continue;
 					}
 					$this->referenceFieldNameList[] = $fname;
@@ -150,26 +162,21 @@ class QueryGenerator {
 					$meta = $handler->getMeta();
 					$fields = $meta->getModuleFields();
 					foreach ($fields as $fname => $finfo) {
-						if ($fname=='roleid' || ($module=='Users' && $finfo->getUIType()!='101')) {
+						if ($fname=='roleid' || ($module=='Users' && !in_array($fname, $userfields))) {
 							continue;
 						}
+						$midx = $module;
 						if ($module=='Users') {
 							if ($fld=='created_user_id') {
-								$usermod = 'UsersCreator';
-							} else {
-								$usermod = 'UsersSec';
+								$midx = 'UsersCreator';
+							} elseif ($this->hasUserReferenceField) {
+								$midx = 'UsersSec';
 							}
-							foreach (array_keys($this->getOpenUserFields()) as $fn) {
-								$this->referenceFieldNameList[] = $fn;
-								$this->referenceFieldNameList[] = $usermod.'.'.$fn;
-								$this->referenceFields[$fld][$usermod][$fn] = $finfo;
-							}
-						} else {
-							$this->referenceFieldNameList[] = $fname;
-							$this->referenceFieldNameList[] = $module.'.'.$fname;
 						}
-						if (in_array($fname, $this->fields) || in_array($module.'.'.$fname, $this->fields)) {
-							$this->referenceFields[$fld][$module][$fname] = $finfo;
+						$this->referenceFieldNameList[] = $fname;
+						$this->referenceFieldNameList[] = $midx.'.'.$fname;
+						if (in_array($fname, $this->fields) || in_array($midx.'.'.$fname, $this->fields)) {
+							$this->referenceFields[$fld][$midx][$fname] = $finfo;
 						}
 					}
 				}
@@ -177,8 +184,13 @@ class QueryGenerator {
 		}
 		if (count($this->ownerFields)>0 && count($this->fields)>0) {
 			foreach ($this->fields as $fld) {
-				if (strtolower(substr($fld, 0, 6))=='users.') {
-					list($fmod, $fname) = explode('.', $fld);
+				if (in_array($fld, $userfields) || strtolower(substr($fld, 0, 6))=='users.') {
+					if (strpos($fld, '.')!==false) {
+						list($fmod, $fname) = explode('.', $fld);
+					} else {
+						$fname = $fld;
+					}
+					$this->referenceFieldNameList[] = $fname;
 					$this->referenceFieldNameList[] = 'Users.'.$fname;
 					$this->setReferenceFieldsManually('assigned_user_id', 'Users', $fname);
 				}
@@ -269,17 +281,13 @@ class QueryGenerator {
 		}
 		$field = '';
 		if ($fldmod == '') {  // not FQN > we have to look for it
-			foreach ($this->referenceFieldInfoList as $fld => $mods) {
+			$LookForFieldInTheseModules = array_merge($this->referenceFieldInfoList, array('assigned_user_id' => array('Users')));
+			foreach ($LookForFieldInTheseModules as $fld => $mods) {
 				if ($fld=='modifiedby') {
 					$fld='assigned_user_id';
 				}
 				foreach ($mods as $mname) {
-					if ($mname=='Users' && empty($this->referenceFields[$fld][$mname][$fldname]) && !empty($this->referenceFields[$fld]['UsersSec'][$fldname])) {
-						$mname = 'UsersSec';
-					}
-					if ($mname=='Users' && empty($this->referenceFields[$fld][$mname][$fldname]) && !empty($this->referenceFields[$fld]['UsersCreator'][$fldname])) {
-						$mname = 'UsersCreator';
-					}
+					// if we find a Users field here (with no prefix) we will make it an assigned user field, if you need other related users, use the virtual modules
 					if (!empty($this->referenceFields[$fld][$mname][$fldname])) {
 						$field = $this->referenceFields[$fld][$mname][$fldname];
 						if ($returnName) {
@@ -288,18 +296,6 @@ class QueryGenerator {
 							} else {
 								if ($fldname=='assigned_user_id' && false !== strpos($field->getTableName(), 'vtiger_crmentity')) {
 									$fldname='smownerid as smowner'.strtolower(getTabModuleName($field->getTabId()));
-								} elseif ($mname=='UsersSec') {
-									if ($alias) {
-										$fldname=$fldname.' as userssec'.$fldname;
-									} else {
-										$fldname=$fldname;
-									}
-								} elseif ($mname=='UsersCreator') {
-									if ($alias) {
-										$fldname=$fldname.' as userscreator'.$fldname;
-									} else {
-										$fldname=$fldname;
-									}
 								} else {
 									if ($alias) {
 										$fldname=$field->getColumnName().' as '.strtolower(getTabModuleName($field->getTabId())).$field->getColumnName();
@@ -449,6 +445,7 @@ class QueryGenerator {
 			$this->addConditionGlue(self::$AND);
 		}
 		if (is_array($this->advFilterList) && count($this->advFilterList) > 0) {
+			$this->startGroup('');
 			foreach ($this->advFilterList as $groupcolumns) {
 				$filtercolumns = $groupcolumns['columns'];
 				if (count($filtercolumns) > 0) {
@@ -472,7 +469,7 @@ class QueryGenerator {
 									break;
 								}
 							}
-							$this->addReferenceModuleFieldCondition($mname, $rfld, $name, $filter['value'], $filter['comparator']);
+							$this->addReferenceModuleFieldCondition($mname, $reffld, $name, $filter['value'], $filter['comparator']);
 						}
 						$columncondition = $filter['column_condition'];
 						if (!empty($columncondition)) {
@@ -486,6 +483,7 @@ class QueryGenerator {
 					}
 				}
 			}
+			$this->endGroup();
 		}
 		if ($this->conditionInstanceCount > 0) {
 			$this->endGroup();
@@ -772,7 +770,7 @@ class QueryGenerator {
 					$tableNameAlias = '';
 				}
 				$sql .= " $tableJoinMapping[$tableName] $tableName $tableNameAlias ON $condition";
-				$referenceFieldTableList[] = $tableName;
+				$referenceFieldTableList[] = ($tableNameAlias=='' ? $tableName : $tableNameAlias);
 			}
 		}
 
@@ -786,7 +784,6 @@ class QueryGenerator {
 			$sql .= ' INNER JOIN '.$relationInfo['relationTable'].' ON '.
 			$relationInfo['relationTable'].".$relationInfo[$relatedModule]=$baseTable.$baseTableIndex";
 		}
-
 		// Adding support for conditions on reference module fields
 		if (count($this->referenceFieldInfoList)>0) {
 			$alreadyinfrom = array_keys($tableJoinMapping);
@@ -835,7 +832,7 @@ class QueryGenerator {
 						}
 						$sql .= ' LEFT JOIN '.$tableName.' AS '.$tableName.$conditionInfo['referenceField'].' ON '.$tableName.$conditionInfo['referenceField'].'.'
 							.$reltableList[$tableName].'='.$referenceFieldObject->getTableName().'.'.$referenceFieldObject->getColumnName();
-						$referenceFieldTableList[] = $tableName;
+						$referenceFieldTableList[] = $tableName.$conditionInfo['referenceField'];
 					}
 				}
 			}
@@ -868,14 +865,14 @@ class QueryGenerator {
 									$sql .= " LEFT JOIN $fldtname ON $fldtname".'.'.$moduleTableIndexList[$fldtname].'='.$baseTable.'.'.$baseTableIndex;
 									$alreadyinfrom[] = $fldtname;
 								}
-								if (!in_array($tableName, $referenceFieldTableList)) {
-									if (($referenceFieldObject->getFieldName() == 'parent_id' || $fld == 'parent_id') && ($this->getModule() == 'Calendar' || $this->getModule() == 'Events')) {
+								if (!in_array($tableName.$fld, $referenceFieldTableList)) {
+									if (($referenceFieldObject->getFieldName() == 'parent_id' || $fld == 'parent_id') && ($this->getModule() == 'Calendar')) {
 										$joinclause = 'LEFT JOIN vtiger_seactivityrel ON vtiger_seactivityrel.activityid = vtiger_activity.activityid';
 										if (strpos($sql, $joinclause)===false) {
 											$sql .= " $joinclause ";
 										}
 									}
-									if (($referenceFieldObject->getFieldName() == 'contact_id' || $fld == 'contact_id') && ($this->getModule() == 'Calendar' || $this->getModule() == 'Events')) {
+									if (($referenceFieldObject->getFieldName() == 'contact_id' || $fld == 'contact_id') && ($this->getModule() == 'Calendar')) {
 										$joinclause = 'LEFT JOIN vtiger_cntactivityrel ON vtiger_cntactivityrel.activityid = vtiger_activity.activityid';
 										if (strpos($sql, $joinclause)===false) {
 											$sql .= " $joinclause ";
@@ -883,7 +880,7 @@ class QueryGenerator {
 									}
 									$sql .= ' LEFT JOIN '.$tableName.' AS '.$tableName.$fld.' ON '.
 										$tableName.$fld.'.'.$reltableList[$tableName].'='.$moduleFields[$fld]->getTableName().'.'.$moduleFields[$fld]->getColumnName();
-									$referenceFieldTableList[] = $tableName;
+									$referenceFieldTableList[] = $tableName.$fld;
 								}
 								break 2;
 							}
@@ -913,14 +910,14 @@ class QueryGenerator {
 								$sql .= " LEFT JOIN $fldtname ON $fldtname".'.'.$moduleTableIndexList[$fldtname].'='.$baseTable.'.'.$baseTableIndex;
 								$alreadyinfrom[] = $fldtname;
 							}
-							if (!in_array($tableName, $referenceFieldTableList) && !in_array($tableName.$fld, $referenceFieldTableList)) {
-								if (($referenceFieldObject->getFieldName() == 'parent_id' || $fld == 'parent_id') && ($this->getModule() == 'Calendar' || $this->getModule() == 'Events')) {
+							if (!in_array($tableName.$fld, $referenceFieldTableList)) {
+								if (($referenceFieldObject->getFieldName() == 'parent_id' || $fld == 'parent_id') && ($this->getModule() == 'Calendar')) {
 									$joinclause = 'LEFT JOIN vtiger_seactivityrel ON vtiger_seactivityrel.activityid = vtiger_activity.activityid';
 									if (strpos($sql, $joinclause)===false) {
 										$sql .= " $joinclause ";
 									}
 								}
-								if (($referenceFieldObject->getFieldName() == 'contact_id' || $fld == 'contact_id') && ($this->getModule() == 'Calendar' || $this->getModule() == 'Events')) {
+								if (($referenceFieldObject->getFieldName() == 'contact_id' || $fld == 'contact_id') && ($this->getModule() == 'Calendar')) {
 									$joinclause = 'LEFT JOIN vtiger_cntactivityrel ON vtiger_cntactivityrel.activityid = vtiger_activity.activityid';
 									if (strpos($sql, $joinclause)===false) {
 										$sql .= " $joinclause ";
@@ -928,7 +925,7 @@ class QueryGenerator {
 								}
 								$sql .= ' LEFT JOIN '.$tableName.' AS '.$tableName.$fld.' ON '.
 									$tableName.$fld.'.'.$reltableList[$tableName].'='.$moduleFields[$fld]->getTableName().'.'.$moduleFields[$fld]->getColumnName();
-								$referenceFieldTableList[] = $tableName;
+								$referenceFieldTableList[] = $tableName.$fld;
 							}
 							break;
 						}
