@@ -1,6 +1,6 @@
 <?php
 /*********************************************************************************
- * Copyright 2012-2014 JPL TSolucio, S.L.  --  This file is a part of coreBOSCP.
+ * Copyright 2012-2020 JPL TSolucio, S.L.  --  This file is a part of coreBOSCP.
  * You can copy, adapt and distribute the work under the "Attribution-NonCommercial-ShareAlike"
  * Vizsage Public License (the "License"). You may not use this file except in compliance with the
  * License. Roughly speaking, non-commercial users may share and modify this code, but must give credit
@@ -13,26 +13,14 @@
  * License terms of Creative Commons Attribution-NonCommercial-ShareAlike 3.0 (the License).
  ********************************************************************************/
 
-/* function used to get the numeration of entities:: autonumeric field
- * return array $entitynum - numeration of entities
- */
-function vtws_get_entitynum($user = '') {
-	require_once 'include/utils/UserInfoUtil.php';
-	require_once 'modules/Users/Users.php';
-	global $adb;
-
-	$enumres = $adb->query('SELECT semodule, prefix FROM vtiger_modentity_num');
-	$no_of_cont = $adb->num_rows($enumres);
-	$entitynum = array();
-	for ($i=0; $i<$no_of_cont; $i++) {
-		$module = $adb->query_result($enumres, $i, 'semodule');
-		$prefix = $adb->query_result($enumres, $i, 'prefix');
-		if (empty($entitynum[$module])) {
-			$entitynum[$module] = array($prefix);
-		} else {
-			$entitynum[$module][] = $prefix;
-		}
-	}
-	return array($entitynum);
-}
-?>
+$operationInfo = array(
+	'name'    => 'UnsetRelation',
+	'include' => 'include/Webservices/UnsetRelation.php',
+	'handler' => 'vtws_unsetrelation',
+	'prelogin'=> 0,
+	'type'    => 'POST',
+	'parameters' => array(
+		array('name' => 'unrelate_this_id','type' => 'String'),
+		array('name' => 'with_these_ids','type' => 'encoded')
+	)
+);

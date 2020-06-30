@@ -30,18 +30,14 @@ function evvt_strip_html_links($text) {
 	return $text;
 }
 
-function vtws_changePortalUserPassword($email, $newPass) {
+function vtws_changePortalUserPassword($email, $newPass, $user = '') {
 	global $adb,$log;
 	$log->debug('>< changePortalUserPassword');
 	$nra = $adb->pquery('update vtiger_portalinfo set user_password=? where user_name=?', array($newPass,$email));
-	if ($nra) {
-		return true;
-	} else {
-		return false;
-	}
+	return ($nra && $adb->num_rows($nra)>0);
 }
 
-function vtws_findByPortalUserName($username) {
+function vtws_findByPortalUserName($username, $user = '') {
 	global $adb,$log;
 	$log->debug('>< vtws_findByPortalUserName');
 	$rs = $adb->pquery('select count(*) from vtiger_portalinfo where isactive=1 and user_name=?', array($username));
@@ -49,7 +45,7 @@ function vtws_findByPortalUserName($username) {
 	return !empty($nra);
 }
 
-function vtws_sendRecoverPassword($username) {
+function vtws_sendRecoverPassword($username, $user = '') {
 	global $adb,$log,$current_user;
 	$log->debug('> vtws_sendRecoverPassword');
 
@@ -85,7 +81,7 @@ function vtws_getPortalUserInfo($user) {
 	$usrinfo = array();
 	$retfields = array('date_format','first_name','last_name','email1');
 	foreach ($retfields as $fld) {
-		if (isset($user->column_fields[$fld]) && !empty($user->column_fields[$fld])) {
+		if (isset($user->column_fields[$fld])) {
 			$usrinfo[$fld] = $user->column_fields[$fld];
 		}
 	}
@@ -93,7 +89,7 @@ function vtws_getPortalUserInfo($user) {
 	return $usrinfo;
 }
 
-function vtws_getAllUsers() {
+function vtws_getAllUsers($user = '') {
 	global $log;
 	$log->debug('> vtws_getAllUsers');
 
@@ -109,11 +105,9 @@ function vtws_getAllUsers() {
 }
 
 function vtws_getAssignedUserList($module, $user) {
-	global $log,$current_user,$default_charset;
+	global $log, $default_charset;
 	$log->debug('> getAssignedUserList '.$module);
-	$hcuser = $current_user;
-	$current_user = $user;
-	$userprivs = $current_user->getPrivileges();
+	$userprivs = $user->getPrivileges();
 	$tabid=getTabid($module);
 	if (!$userprivs->hasGlobalWritePermission() && !$userprivs->hasModuleWriteSharing($tabid)) {
 		$users = get_user_array(false, 'Active', $user->id, 'private');
@@ -125,16 +119,12 @@ function vtws_getAssignedUserList($module, $user) {
 	foreach ($users as $id => $usr) {
 		$usrinfo[] = array('userid' => $usrwsid.$id,'username'=> trim(html_entity_decode($usr, ENT_QUOTES, $default_charset)));
 	}
-	$current_user = $hcuser;
 	return json_encode($usrinfo);
 }
 
 function vtws_getAssignedGroupList($module, $user) {
-	global $log,$current_user,$default_charset;
+	global $log, $default_charset;
 	$log->debug('> vtws_getAssignedGroupList '.$module);
-	$hcuser = $current_user;
-	$current_user = $user;
-
 	$userPrivs = $user->getPrivileges();
 
 	$tabid=getTabid($module);
@@ -148,11 +138,10 @@ function vtws_getAssignedGroupList($module, $user) {
 	foreach ($users as $id => $usr) {
 		$usrinfo[] = array('groupid' => $usrwsid.$id,'groupname'=> trim(html_entity_decode($usr, ENT_QUOTES, $default_charset)));
 	}
-	$current_user = $hcuser;
 	return json_encode($usrinfo);
 }
 
-function vtws_AuthenticateContact($email, $password) {
+function vtws_AuthenticateContact($email, $password, $user = '') {
 	global $adb,$log;
 	$log->debug('> AuthenticateContact '.$email.','.$password);
 
@@ -162,36 +151,33 @@ function vtws_AuthenticateContact($email, $password) {
 		inner join vtiger_crmentity on vtiger_crmentity.crmid=vtiger_portalinfo.id
 		where vtiger_crmentity.deleted=0 and user_name=? and user_password=?
 		 and isactive=1 and vtiger_customerdetails.portal=1', array($email, $password));
-	$nra = $adb->query_result($rs, 0, 0);
-
-	if (!empty($nra)) {
-		return vtyiicpng_getWSEntityId('Contacts').$nra;
+	if ($rs && $adb->num_rows($rs)>0 && !empty($rs->fields['id'])) {
+		return vtyiicpng_getWSEntityId('Contacts').$rs->fields['id'];
 	} else {
 		return false;
 	}
 }
 
-function vtws_getPicklistValues($fld_module) {
+function vtws_getPicklistValues($fld_module, $user = '') {
 	global $adb,$log;
 	include_once 'modules/PickList/PickListUtils.php';
 	$log->debug('> getPicklistValues '.$fld_module);
 	$res=array();
-	$all=array();
+	$allpicklists=getUserFldArray($fld_module, 'H1');
+	foreach ($allpicklists as $picklist) {
+		$res[$picklist['fieldname']]=$picklist['value'];
+	}
 	if ($fld_module == 'Documents') {
+		$folders=array();
 		$result=$adb->query('select folderid,foldername from vtiger_attachmentsfolder');
 		$number=$adb->num_rows($result);
 		$DocumentFoldersWSID=vtyiicpng_getWSEntityId('DocumentFolders');
 		for ($i=0; $i<$number; $i++) {
 			$folderid=$DocumentFoldersWSID.$adb->query_result($result, $i, 0);
 			$foldername=$adb->query_result($result, $i, 1);
-			$all[$folderid]=$foldername;
+			$folders[$folderid]=$foldername;
 		}
-		$res['folderid']=$all;
-	} else {
-		$allpicklists=getUserFldArray($fld_module, 'H1');
-		foreach ($allpicklists as $picklist) {
-			$res[$picklist['fieldname']]=$picklist['value'];
-		}
+		$res['folderid']=$folders;
 	}
 	return serialize($res);
 }
@@ -199,8 +185,7 @@ function vtws_getPicklistValues($fld_module) {
 function vtws_getUItype($module, $user) {
 	global $adb,$log;
 	$log->debug('> getUItype '.$module);
-	$tabid=getTabid($module);
-	$res=$adb->pquery('select uitype,fieldname from vtiger_field where tabid=? and presence in (0,2) ', array($tabid));
+	$res=$adb->pquery('select uitype,fieldname from vtiger_field where tabid=? and presence in (0,2)', array(getTabid($module)));
 	$nr=$adb->num_rows($res);
 	$resp=array();
 	for ($i=0; $i<$nr; $i++) {
@@ -212,8 +197,12 @@ function vtws_getUItype($module, $user) {
 
 function vtws_getReferenceValue($strids, $user) {
 	global $log, $adb, $default_charset;
-	$ids=unserialize($strids);
 	$log->debug('> vtws_getReferenceValue '.$strids);
+	$ids=unserialize($strids);
+	if ($ids===false) {
+		$ids = array();
+	}
+	$result = array();
 	foreach ($ids as $idref) {
 		if (strpos($idref, '|')>0) {
 			$idref = explode('|', trim($idref, '|'));
@@ -269,43 +258,49 @@ function vtws_getReferenceValue($strids, $user) {
  * @param string $query contains the search term we are looking for
  * @param string $search_onlyin comma separated list of modules to search in
  * @param array $restrictionids contains the user we are to search as and the account and contact restrictions
+ * @return array with the results and total number of records per module
+ * @example {'query':'che', 'search_onlyin':'Accounts,Contacts', 'restrictionids': JSON.stringify({'userId': '19x1', 'accountId':'11x74', 'contactId':'12x1084'}) })
+ * @example {'query':'che', 'search_onlyin':'Accounts,Contacts', 'restrictionids': JSON.stringify({'userId': '19x1', 'accountId':'11x0', 'contactId':'12x0'}) })
+ */
+$cbwsgetSearchResultsTotals = array();
+function cbwsgetSearchResultsWithTotals($query, $search_onlyin, $restrictionids, $user) {
+	global $cbwsgetSearchResultsTotals;
+	return array(
+		'records' => cbwsgetSearchResults($query, $search_onlyin, $restrictionids, $user),
+		'totals' => $cbwsgetSearchResultsTotals,
+	);
+}
+
+/**
+ * launch a global search in the application
+ * @param string $query contains the search term we are looking for
+ * @param string $search_onlyin comma separated list of modules to search in
+ * @param array $restrictionids contains the user we are to search as and the account and contact restrictions
  * @return array with the results
  * @example {'query':'che', 'search_onlyin':'Accounts,Contacts', 'restrictionids': JSON.stringify({'userId': '19x1', 'accountId':'11x74', 'contactId':'12x1084'}) })
  * @example {'query':'che', 'search_onlyin':'Accounts,Contacts', 'restrictionids': JSON.stringify({'userId': '19x1', 'accountId':'11x0', 'contactId':'12x0'}) })
  */
 function cbwsgetSearchResults($query, $search_onlyin, $restrictionids, $user) {
-	return unserialize(vtws_getSearchResults($query, $search_onlyin, $restrictionids, $user));
-}
-
-/**
- * launch a global search in the application. use cbwsgetSearchResults instead of this function
- * @see cbwsgetSearchResults
- * @param string $query contains the search term we are looking for
- * @param string $search_onlyin comma separated list of modules to search in
- * @param array $restrictionids contains the user we are to search as and the account and contact restrictions
- * @return string php serialized array with the results
- * @example {'query':'che', 'search_onlyin':'Accounts,Contacts', 'restrictionids': JSON.stringify({'userId': '19x1', 'accountId':'11x74', 'contactId':'12x1084'}) })
- * @example {'query':'che', 'search_onlyin':'Accounts,Contacts', 'restrictionids': JSON.stringify({'userId': '19x1', 'accountId':'11x0', 'contactId':'12x0'}) })
- */
-function vtws_getSearchResults($query, $search_onlyin, $restrictionids, $user) {
-	global $adb,$current_user;
+	global $adb,$current_user, $cbwsgetSearchResultsTotals;
 	$res=array();
 	// security restrictions
 	if (empty($query) || empty($restrictionids) || !is_array($restrictionids)) {
-		return serialize($res);
+		return $res;
 	}
 	if (empty($restrictionids['userId']) || empty($restrictionids['accountId']) || empty($restrictionids['contactId'])) {
-		return serialize($res);
+		return $res;
 	}
 	list($void,$accountId) = explode('x', $restrictionids['accountId']);
 	list($void,$contactId) = explode('x', $restrictionids['contactId']);
 	list($void,$userId) = explode('x', $restrictionids['userId']);
 	$limit = (isset($restrictionids['limit']) ? $restrictionids['limit'] : 0);
-	$current_user->retrieveCurrentUserInfoFromFile($userId);
 	// if connected user does not have admin privileges > user must be the connected user
 	if ($user->is_admin!='on' && $user->id!=$userId) {
-		return serialize($res);
+		return $res;
 	}
+	$newUser = new Users();
+	$newUser->retrieveCurrentUserInfoFromFile($userId);
+	$current_user = $newUser;
 	// connected user must have access to account and contact > this will be restricted by the coreBOS system and the rest of the code
 	// start work
 	require_once 'modules/CustomView/CustomView.php';
@@ -316,6 +311,7 @@ function vtws_getSearchResults($query, $search_onlyin, $restrictionids, $user) {
 	$total_record_count = 0;
 	$i = 0;
 	$j=0;
+	$cbwsgetSearchResultsTotals = array();
 	$moduleRecordCount = array();
 	foreach ($object_array as $module => $object_name) {
 		$focus = CRMEntity::getInstance($module);
@@ -364,7 +360,7 @@ function vtws_getSearchResults($query, $search_onlyin, $restrictionids, $user) {
 		foreach ($focus->list_fields as $tableinfo) {
 			foreach ($tableinfo as $tbl => $col) {
 				if (!empty($tbl) && !empty($col)) {
-					$field_list .= 'vtiger_'.$tbl.'.'.$col.',';
+					$field_list .= (substr($tbl, 0, 7)=='vtiger_' ? '' : 'vtiger_').$tbl.'.'.$col.',';
 				}
 			}
 		}
@@ -382,10 +378,19 @@ function vtws_getSearchResults($query, $search_onlyin, $restrictionids, $user) {
 				$listquery .= ' and ('.$cond.')';
 			}
 		}
+		if ($limit > 0) {
+			$listquery = $listquery.' limit '.$limit;
+		}
 		$list_result = $adb->query($listquery);
 		$noofrows = $adb->num_rows($list_result);
+		if ($noofrows>0) {
+			$count_result = $adb->query(mkCountQuery($listquery));
+			$cbwsgetSearchResultsTotals[$module] = (int) $count_result->fields['count'];
+		} else {
+			$cbwsgetSearchResultsTotals[$module] = 0;
+		}
 		$moduleRecordCount[$module]['count'] = $noofrows;
-		$navigation_array = VT_getSimpleNavigationValues(1, 100, $noofrows);
+		$navigation_array = VT_getSimpleNavigationValues(1, ($limit>0 ? $limit : 100), $noofrows);
 		$listview_entries = getSearchingListViewEntries($focus, $module, $list_result, $navigation_array, '', '', '', '', $oCustomView, '', '', '', true);
 		$total_record_count = $total_record_count + $noofrows;
 		if (!empty($listview_entries)) {
@@ -400,7 +405,22 @@ function vtws_getSearchResults($query, $search_onlyin, $restrictionids, $user) {
 		shuffle($res);
 		$res = array_slice($res, 0, $limit);
 	}
-	return serialize($res);
+	$current_user = $user;
+	return $res;
+}
+
+/**
+ * launch a global search in the application. use cbwsgetSearchResults instead of this function
+ * @see cbwsgetSearchResults
+ * @param string $query contains the search term we are looking for
+ * @param string $search_onlyin comma separated list of modules to search in
+ * @param array $restrictionids contains the user we are to search as and the account and contact restrictions
+ * @return string php serialized array with the results
+ * @example {'query':'che', 'search_onlyin':'Accounts,Contacts', 'restrictionids': JSON.stringify({'userId': '19x1', 'accountId':'11x74', 'contactId':'12x1084'}) })
+ * @example {'query':'che', 'search_onlyin':'Accounts,Contacts', 'restrictionids': JSON.stringify({'userId': '19x1', 'accountId':'11x0', 'contactId':'12x0'}) })
+ */
+function vtws_getSearchResults($query, $search_onlyin, $restrictionids, $user) {
+	return serialize(cbwsgetSearchResults($query, $search_onlyin, $restrictionids, $user));
 }
 
 function evvt_PortalModuleRestrictions($module, $accountId, $contactId) {

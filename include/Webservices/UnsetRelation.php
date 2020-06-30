@@ -14,9 +14,9 @@
  ************************************************************************************/
 require_once 'include/Webservices/Query.php';
 
-function vtws_setrelation($relateThisId, $withTheseIds, $user) {
+function vtws_unsetrelation($unrelateThisId, $withTheseIds, $user) {
 	global $log,$adb;
-	$relateThisId = vtws_getWSID($relateThisId);
+	$relateThisId = vtws_getWSID($unrelateThisId);
 	list($moduleId, $elementId) = vtws_getIdComponents($relateThisId);
 	$webserviceObject = VtigerWebserviceObject::fromId($adb, $moduleId);
 	$handlerPath = $webserviceObject->getHandlerPath();
@@ -49,12 +49,12 @@ function vtws_setrelation($relateThisId, $withTheseIds, $user) {
 		throw new WebServiceException(WebServiceErrorCode::$ACCESSDENIED, 'Permission to write is denied');
 	}
 
-	vtws_internal_setrelation($elementId, $moduleName, $withTheseIds);
+	vtws_internal_unsetrelation($elementId, $moduleName, $withTheseIds);
 	VTWS_PreserveGlobal::flush();
 	return true;
 }
 
-function vtws_internal_setrelation($elementId, $moduleName, $withTheseIds) {
+function vtws_internal_unsetrelation($elementId, $moduleName, $withTheseIds) {
 	global $adb;
 	$withTheseIds = (array)$withTheseIds;
 	$focus = CRMEntity::getInstance($moduleName);
@@ -63,6 +63,8 @@ function vtws_internal_setrelation($elementId, $moduleName, $withTheseIds) {
 		list($withModuleId, $withElementId) = vtws_getIdComponents($withThisId);
 		$rsmodname = $adb->pquery('select name from vtiger_ws_entity where id=?', array($withModuleId));
 		$withModuleName = $adb->query_result($rsmodname, 0, 0);
-		relateEntities($focus, $moduleName, $elementId, $withModuleName, $withElementId);
+		if ($moduleName != $withModuleName) {
+			DeleteEntity($moduleName, $withModuleName, $focus, $elementId, $withElementId);
+		}
 	}
 }

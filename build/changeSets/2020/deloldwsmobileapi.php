@@ -1,6 +1,6 @@
 <?php
 /*************************************************************************************************
- * Copyright 2016 JPL TSolucio, S.L. -- This file is a part of TSOLUCIO coreBOS Customizations.
+ * Copyright 2020 JPL TSolucio, S.L. -- This file is a part of TSOLUCIO coreBOS Customizations.
 * Licensed under the vtiger CRM Public License Version 1.1 (the "License"); you may not use this
 * file except in compliance with the License. You can redistribute it and/or modify it
 * under the terms of the License. JPL TSolucio, S.L. reserves all rights not expressly
@@ -14,7 +14,7 @@
 * at <http://corebos.org/documentation/doku.php?id=en:devel:vpl11>
 *************************************************************************************************/
 
-class cleanoptimizedatabase_150 extends cbupdaterWorker {
+class deloldwsmobileapi extends cbupdaterWorker {
 
 	public function applyChange() {
 		if ($this->hasError()) {
@@ -23,13 +23,8 @@ class cleanoptimizedatabase_150 extends cbupdaterWorker {
 		if ($this->isApplied()) {
 			$this->sendMsg('Changeset '.get_class($this).' already applied!');
 		} else {
-			// add Role2Picklist Index for Speed
-			$this->ExecuteQuery('ALTER TABLE `vtiger_role2picklist` ADD INDEX(`picklistvalueid`)');
-			// Extend description data-type (eg. allow large emails to be stored)
-			$this->ExecuteQuery('ALTER TABLE vtiger_crmentity MODIFY COLUMN description MEDIUMTEXT');
-			// change related and product IDs on Ticket to INT for minor performance enhancement
-			$this->ExecuteQuery('ALTER TABLE vtiger_troubletickets CHANGE parent_id parent_id INT(19) NULL', array());
-			$this->ExecuteQuery('ALTER TABLE vtiger_troubletickets CHANGE product_id product_id INT(19) NULL', array());
+			$this->ExecuteQuery("DELETE FROM vtiger_ws_operation_parameters WHERE operationid IN (select operationid FROM vtiger_ws_operation WHERE handler_path='modules/Mobile/api/wsapi.php');");
+			$this->ExecuteQuery("DELETE FROM vtiger_ws_operation WHERE handler_path='modules/Mobile/api/wsapi.php';");
 			$this->sendMsg('Changeset '.get_class($this).' applied!');
 			$this->markApplied(false);
 		}

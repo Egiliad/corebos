@@ -218,6 +218,20 @@
 	<systemupdate>true</systemupdate>
 </changeSet>
 <changeSet>
+	<author>joebordes</author>
+	<description>Delete old mobile webserivice API</description>
+	<filename>build/changeSets/2020/deloldwsmobileapi.php</filename>
+	<classname>deloldwsmobileapi</classname>
+	<systemupdate>true</systemupdate>
+</changeSet>
+<changeSet>
+	<author>joebordes</author>
+	<description>Add web service support for ModTracker as an actor module</description>
+	<filename>build/changeSets/2020/addWSModTrackerActor.php</filename>
+	<classname>addWSModTrackerActor</classname>
+	<systemupdate>true</systemupdate>
+</changeSet>
+<changeSet>
 	<author>Elifuraha</author>
 	<description>FacturaScripts code fields</description>
 	<filename>build/changeSets/2020/fscriptscodfields.php</filename>

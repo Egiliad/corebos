@@ -2282,7 +2282,7 @@ function OpenCompose(id, mode, crmid) {
 	case 'print':
 		url = 'index.php?module=Emails&action=EmailsAjax&file=PrintEmail&print=true&record='+id;
 	}
-	openPopUp('xComposeEmail', this, url, 'createemailWin', 920, 700, 'menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes');
+	openPopUp('xComposeEmail', this, url, 'createemailWin', 1200, 900, 'menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=yes');
 }
 
 // Mass select in Popup
@@ -4010,8 +4010,9 @@ function startCall(number, recordid) {
 //added for tooltip manager
 function ToolTipManager() {
 	var state = false;
-	var secondshowTimer = 0;
+	var secondshowTimer = 600;
 	var secondshowTimeout = 1800;
+	var autohideTimer = '';
 	/**
 	 * this function creates the tooltip div and adds the information to it
 	 * @param string text - the text to be added to the tooltip
@@ -4035,6 +4036,17 @@ function ToolTipManager() {
 		div.style.display = 'block';
 		div.style.zIndex = '1000000';
 		positionTooltip(node, divName);
+		autohideTimer = setTimeout(
+			function () {
+				div.style.display = 'none';
+				clearTimeout(autohideTimer);
+			},
+			secondshowTimeout
+		);
+		div.addEventListener('mouseenter', function () {
+			clearTimeout(autohideTimer);
+			div.style.display = 'block';
+		});
 	}
 
 	function getDivId(id, fieldname) {
@@ -4063,15 +4075,21 @@ function ToolTipManager() {
 		var div = document.getElementById(divName);
 		if (typeof div != 'undefined' && div != null ) {
 			if (typeof nodelay != 'undefined' && nodelay != null) {
-				setTimeout(function () {
-					div.style.display = 'none';
-				}, secondshowTimeout);
+				if (!state) {
+					div.addEventListener('mouseleave', function () {
+						setTimeout(function () {
+							div.style.display = 'none';
+						}, secondshowTimer);
+					});
+				}
 			} else {
-				setTimeout(function () {
-					if (!state) {
-						div.style.display = 'none';
-					}
-				}, secondshowTimeout);
+				div.addEventListener('mouseleave', function	() {
+					setTimeout(function () {
+						if (!state) {
+							div.style.display = 'none';
+						}
+					}, secondshowTimer);
+				});
 			}
 		}
 	}
@@ -5197,7 +5215,7 @@ function AutocompleteSetup() {
 var appSubmitFormWithEnter = 0;
 GlobalVariable_getVariable('Application_EditView_Submit_Form_WithEnter', 1, gVTModule, '').then(function (response) {
 	var obj = JSON.parse(response);
-	appSubmitFormWithEnter = Number(obj.Application_Submit_Form_WithEnter);
+	appSubmitFormWithEnter = Number(obj.Application_EditView_Submit_Form_WithEnter);
 }, function (error) {
 	appSubmitFormWithEnter = 0;
 });

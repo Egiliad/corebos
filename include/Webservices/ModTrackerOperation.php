@@ -8,20 +8,21 @@
  * All Rights Reserved.
  *************************************************************************************/
 require_once 'include/Webservices/VtigerCRMActorMeta.php';
+require_once 'modules/ModTracker/ModTrackerUtils.php';
 
-class VtigerActorOperation extends WebserviceEntityOperation {
-	protected $entityTableName;
+class ModTrackerOperation extends WebserviceEntityOperation {
+	protected $entityTableName = 'vtiger_modtracker_basic';
 	protected $moduleFields;
 	protected $isEntity = false;
 	protected $element;
 	protected $id;
 	private $queryTotalRows = 0;
+	private $actorModule = 'ModTracker';
 
 	public function __construct($webserviceObject, $user, $adb, $log) {
 		parent::__construct($webserviceObject, $user, $adb, $log);
-		$this->entityTableName = $this->getActorTables();
-		if ($this->entityTableName === null) {
-			throw new WebServiceException(WebServiceErrorCode::$UNKNOWNENTITY, 'Entity is not associated with any tables');
+		if (!vtlib_isModuleActive($this->actorModule)) {
+			throw new WebServiceException(WebServiceErrorCode::$UNKNOWNENTITY, $this->actorModule.' is not active');
 		}
 		$this->meta = $this->getMetaInstance();
 		$this->moduleFields = null;
@@ -33,93 +34,39 @@ class VtigerActorOperation extends WebserviceEntityOperation {
 		if (empty(WebserviceEntityOperation::$metaCache[$this->webserviceObject->getEntityName()][$this->user->id])) {
 			WebserviceEntityOperation::$metaCache[$this->webserviceObject->getEntityName()][$this->user->id]
 				= new VtigerCRMActorMeta($this->entityTableName, $this->webserviceObject, $this->pearDB, $this->user);
+			WebserviceEntityOperation::$metaCache[$this->webserviceObject->getEntityName()][$this->user->id]->addAnotherTable('vtiger_modtracker_detail', 'id');
+			WebserviceEntityOperation::$metaCache[$this->webserviceObject->getEntityName()][$this->user->id]->setmoduleField('whodid', 'uitype', '101');
+			WebserviceEntityOperation::$metaCache[$this->webserviceObject->getEntityName()][$this->user->id]->setmoduleField('whodid', 'fieldDataType', 'reference');
+			WebserviceEntityOperation::$metaCache[$this->webserviceObject->getEntityName()][$this->user->id]->setmoduleField('whodid', 'referenceList', array('Users'));
+			WebserviceEntityOperation::$metaCache[$this->webserviceObject->getEntityName()][$this->user->id]->setmoduleField('crmid', 'uitype', '10');
+			WebserviceEntityOperation::$metaCache[$this->webserviceObject->getEntityName()][$this->user->id]->setmoduleField('crmid', 'fieldDataType', 'reference');
+			$referenceList = array();
+			$infomodules = ModTrackerUtils::modTrac_getModuleinfo();
+			foreach ($infomodules as $value) {
+				$referenceList[] = $value['name'];
+			}
+			WebserviceEntityOperation::$metaCache[$this->webserviceObject->getEntityName()][$this->user->id]->setmoduleField('crmid', 'referenceList', $referenceList);
 		}
 		return WebserviceEntityOperation::$metaCache[$this->webserviceObject->getEntityName()][$this->user->id];
-	}
-
-	protected function getActorTables() {
-		static $actorTables = array();
-
-		if (isset($actorTables[$this->webserviceObject->getEntityName()])) {
-			return $actorTables[$this->webserviceObject->getEntityName()];
-		}
-		$sql = 'select table_name from vtiger_ws_entity_tables where webservice_entity_id=?';
-		$result = $this->pearDB->pquery($sql, array($this->webserviceObject->getEntityId()));
-		$tableName = null;
-		if ($result) {
-			$rowCount = $this->pearDB->num_rows($result);
-			for ($i=0; $i<$rowCount; ++$i) {
-				$row = $this->pearDB->query_result_rowdata($result, $i);
-				$tableName = $row['table_name'];
-			}
-			// Cache the result for further re-use
-			$actorTables[$this->webserviceObject->getEntityName()] = $tableName;
-		}
-		return $tableName;
 	}
 
 	public function getMeta() {
 		return $this->meta;
 	}
 
-	protected function getNextId($elementType, $element) {
-		if (strcasecmp($elementType, 'Groups') === 0) {
-			$tableName='vtiger_users';
-		} else {
-			$tableName = $this->entityTableName;
-		}
-		$meta = $this->getMeta();
-		if (strcasecmp($elementType, 'Groups') !== 0 && strcasecmp($elementType, 'Users') !== 0) {
-			$sql = 'update '.$tableName.'_seq set id=(select max('.$meta->getIdColumn().") from $tableName)";
-			$this->pearDB->pquery($sql, array());
-		}
-		return $this->pearDB->getUniqueId($tableName);
-	}
-
-	public function __create($elementType, $element) {
-		require_once 'include/utils/utils.php';
-
-		$this->id=$this->getNextId($elementType, $element);
-
-		$element[$this->meta->getObectIndexColumn()] = $this->id;
-
-		//Insert into group vtiger_table
-		$query = "insert into {$this->entityTableName}(".implode(',', array_keys($element)).') values('.generateQuestionMarks(array_keys($element)).')';
-		$result = null;
-		$transactionSuccessful = vtws_runQueryAsTransaction($query, array_values($element), $result);
-		return $transactionSuccessful;
-	}
-
 	public function create($elementType, $element) {
-		$element = DataTransform::sanitizeForInsert($element, $this->meta);
-
-		$element = $this->restrictFields($element);
-
-		$success = $this->__create($elementType, $element);
-		if (!$success) {
-			throw new WebServiceException(
-				WebServiceErrorCode::$DATABASEQUERYERROR,
-				vtws_getWebserviceTranslatedString('LBL_'.WebServiceErrorCode::$DATABASEQUERYERROR)
-			);
-		}
-		return $this->retrieve(vtws_getId($this->meta->getEntityId(), $this->id));
-	}
-
-	protected function restrictFields($element, $selectedOnly = false) {
-		$fields = $this->getModuleFields();
-		$newElement = array();
-		foreach ($fields as $field) {
-			if (isset($element[$field['name']])) {
-				$newElement[$field['name']] = $element[$field['name']];
-			} elseif ($field['name'] != 'id' && $selectedOnly == false) {
-				$newElement[$field['name']] = '';
-			}
-		}
-		return $newElement;
+		throw new WebServiceException(
+			WebServiceErrorCode::$OPERATIONNOTSUPPORTED,
+			vtws_getWebserviceTranslatedString('LBL_'.WebServiceErrorCode::$OPERATIONNOTSUPPORTED)
+		);
 	}
 
 	public function __retrieve($id) {
-		$query = "select * from {$this->entityTableName} where {$this->meta->getObectIndexColumn()}=?";
+		$query = 'SELECT vtiger_modtracker_basic.*,vtiger_modtracker_detail.fieldname,vtiger_modtracker_detail.prevalue,vtiger_modtracker_detail.postvalue,vtiger_users.first_name,vtiger_users.last_name
+			FROM vtiger_modtracker_basic
+			INNER JOIN vtiger_modtracker_detail ON vtiger_modtracker_basic.id=vtiger_modtracker_detail.id
+			INNER JOIN vtiger_users ON vtiger_users.id=whodid
+			WHERE vtiger_modtracker_basic.id=?';
 		$transactionSuccessful = vtws_runQueryAsTransaction($query, array($id), $result);
 		if (!$transactionSuccessful) {
 			throw new WebServiceException(WebServiceErrorCode::$DATABASEQUERYERROR, vtws_getWebserviceTranslatedString('LBL_'.WebServiceErrorCode::$DATABASEQUERYERROR));
@@ -143,106 +90,53 @@ class VtigerActorOperation extends WebserviceEntityOperation {
 			throw new WebServiceException(WebServiceErrorCode::$RECORDNOTFOUND, 'Record not found');
 		}
 		$element = $this->getElement();
-		if (isset($element['folderid']) && !isset($element['id'])) {
-			$element['id'] = $element['folderid'];
-			unset($element['folderid']);
-		}
+		//var_dump($this->meta->getModuleFields());
 		return DataTransform::filterAndSanitize($element, $this->meta);
 	}
 
 	public function massRetrieve($wsIds) {
 		global $adb;
 		$rdo = array();
-		$query = "select * from {$this->entityTableName} where {$this->meta->getObectIndexColumn()} in (" . generateQuestionMarks($wsIds) . ')';
+		$query = 'SELECT vtiger_modtracker_basic.*,vtiger_modtracker_detail.fieldname,vtiger_modtracker_detail.prevalue,vtiger_modtracker_detail.postvalue,vtiger_users.first_name,vtiger_users.last_name
+			FROM vtiger_modtracker_basic
+			INNER JOIN vtiger_modtracker_detail ON vtiger_modtracker_basic.id=vtiger_modtracker_detail.id
+			INNER JOIN vtiger_users ON vtiger_users.id=whodid
+			WHERE vtiger_modtracker_basic.id in ('.generateQuestionMarks($wsIds).')';
+		array_walk(
+			$wsIds,
+			function (&$val, $idx) {
+				if (strpos($val, 'x')>0) {
+					list($wsid, $val) = explode('x', $val);
+				}
+			}
+		);
 		$rs = $adb->pquery($query, $wsIds);
 		while (!$rs->EOF) {
 			$element = $rs->FetchRow();
-			if (isset($element['folderid']) && !isset($element['id'])) {
-				$element['id'] = $element['folderid'];
-				unset($element['folderid']);
-			}
 			$rdo[] = DataTransform::filterAndSanitize($element, $this->meta);
 		}
 		return $rdo;
 	}
 
-	public function __update($element, $id) {
-		$columnStr = 'set '.implode('=?,', array_keys($element)).' =? ';
-		$query = 'update '.$this->entityTableName.' '.$columnStr.'where '. $this->meta->getObectIndexColumn().'=?';
-		$params = array_values($element);
-		$params[] = $id;
-		$result = null;
-		return vtws_runQueryAsTransaction($query, $params, $result);
-	}
-
 	public function update($element) {
-		$ids = vtws_getIdComponents($element['id']);
-		$element = DataTransform::sanitizeForInsert($element, $this->meta);
-		$element = $this->restrictFields($element);
-
-		$success = $this->__update($element, $ids[1]);
-		if (!$success) {
-			throw new WebServiceException(WebServiceErrorCode::$DATABASEQUERYERROR, vtws_getWebserviceTranslatedString('LBL_'.WebServiceErrorCode::$DATABASEQUERYERROR));
-		}
-		return $this->retrieve(vtws_getId($this->meta->getEntityId(), $ids[1]));
-	}
-
-	public function __revise($element, $id) {
-		$columnStr = 'set '.implode('=?,', array_keys($element)).' =? ';
-		$query = 'update '.$this->entityTableName.' '.$columnStr.'where '.$this->meta->getObectIndexColumn().'=?';
-		$params = array_values($element);
-		$params[] = $id;
-		$result = null;
-		return vtws_runQueryAsTransaction($query, $params, $result);
+		throw new WebServiceException(
+			WebServiceErrorCode::$OPERATIONNOTSUPPORTED,
+			vtws_getWebserviceTranslatedString('LBL_'.WebServiceErrorCode::$OPERATIONNOTSUPPORTED)
+		);
 	}
 
 	public function revise($element) {
-		$ids = vtws_getIdComponents($element['id']);
-
-		$element = DataTransform::sanitizeForInsert($element, $this->meta);
-		$element = $this->restrictFields($element, true);
-
-		$success = $this->__retrieve($ids[1]);
-		if (!$success) {
-			throw new WebServiceException(WebServiceErrorCode::$RECORDNOTFOUND, 'Record not found');
-		}
-
-		$allDetails = $this->getElement();
-		foreach ($allDetails as $index => $value) {
-			if (!isset($element)) {
-				$element[$index] = $value;
-			}
-		}
-		$success = $this->__revise($element, $ids[1]);
-		if (!$success) {
-			throw new WebServiceException(
-				WebServiceErrorCode::$DATABASEQUERYERROR,
-				vtws_getWebserviceTranslatedString('LBL_'.WebServiceErrorCode::$DATABASEQUERYERROR)
-			);
-		}
-
-		return $this->retrieve(vtws_getId($this->meta->getEntityId(), $ids[1]));
-	}
-
-	public function __delete($elemId) {
-		$result = null;
-		$query = 'delete from '.$this->entityTableName.' where '. $this->meta->getObectIndexColumn().'=?';
-		$transactionSuccessful = vtws_runQueryAsTransaction($query, array($elemId), $result);
-		return $transactionSuccessful;
+		throw new WebServiceException(
+			WebServiceErrorCode::$OPERATIONNOTSUPPORTED,
+			vtws_getWebserviceTranslatedString('LBL_'.WebServiceErrorCode::$OPERATIONNOTSUPPORTED)
+		);
 	}
 
 	public function delete($id) {
-		$ids = vtws_getIdComponents($id);
-		$elemId = $ids[1];
-
-		$success = $this->__delete($elemId);
-		if (!$success) {
-			throw new WebServiceException(
-				WebServiceErrorCode::$DATABASEQUERYERROR,
-				vtws_getWebserviceTranslatedString('LBL_'.WebServiceErrorCode::$DATABASEQUERYERROR)
-			);
-		}
-		return array('status'=>'successful');
+		throw new WebServiceException(
+			WebServiceErrorCode::$OPERATIONNOTSUPPORTED,
+			vtws_getWebserviceTranslatedString('LBL_'.WebServiceErrorCode::$OPERATIONNOTSUPPORTED)
+		);
 	}
 
 	public function describe($elementType) {
@@ -269,8 +163,12 @@ class VtigerActorOperation extends WebserviceEntityOperation {
 		);
 	}
 
-	public function getFilterFields($elementType) {
-		return $this->meta->getFilterFields($elementType);
+	public function getFilterFields($module) {
+		return array(
+			'fields'=> array('id','module','crmid','fieldname','prevalue','postvalue','first_name','last_name'),
+			'linkfields'=>array('id'),
+			'pagesize' => intval(GlobalVariable::getVariable('Application_ListView_PageSize', 20, $this->actorModule)),
+		);
 	}
 
 	public function getModuleFields() {
@@ -338,6 +236,7 @@ class VtigerActorOperation extends WebserviceEntityOperation {
 			return $parser->getError();
 		}
 		$mysql_query = $parser->getSql();
+		//$mysql_query = appendFromClauseToQuery($mysql_query, ' inner join vtiger_users on vtiger_users.id=whodid');
 		$meta = $parser->getObjectMetaData();
 		return $mysql_query;
 	}
