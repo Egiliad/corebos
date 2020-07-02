@@ -208,6 +208,7 @@ class Validations extends processcbMap {
 					case 'dateFormat':
 					case 'dateBefore':
 					case 'dateAfter':
+					case 'dateEqualOrAfter':
 					case 'contains':
 					case 'RelatedModuleExists':
 						if ($rule=='greater' || $rule=='bigger') {
@@ -325,6 +326,10 @@ class Validations extends processcbMap {
 									$params = $restrictions[4];
 								}
 								$v->addRule($restrictions[1], $restrictions[2], $lbl);
+								$customValidationMessageFunction = $restrictions[1].'GetMessage';
+								if (function_exists($customValidationMessageFunction)) {
+									$val['msg'] = $customValidationMessageFunction($valfield, $screen_values[$valfield], $params, $screen_values, $val['msg']);
+								}
 								if (isset($val['msg'])) {
 									$v->rule($restrictions[1], $valfield, $params)->message($val['msg'])->label($i18n);
 								} else {
@@ -410,10 +415,18 @@ class Validations extends processcbMap {
 				}
 				if (strpos($fvalidation, '~OTH~')) { //D~O~OTH~GE~support_start_date~Support Start Date
 					$val = explode('~', $fvalidation);
+					switch($val[3]){
+						case 'GE':
+							$comparison = 'dateEqualOrAfter';
+							break;
+						default:
+							$comparison = 'dateAfter';
+							break;
+					}
 					if (isset($mapping['fields'][$fname])) {
-						$mapping['fields'][$fname][] = array('rule'=>'dateAfter', 'rst'=>array('{{'.$val[4].'}}'));
+						$mapping['fields'][$fname][] = array('rule'=>$comparison, 'rst'=>array('{{'.$val[4].'}}'));
 					} else {
-						$mapping['fields'][$fname] = array(array('rule'=>'dateAfter', 'rst'=>array('{{'.$val[4].'}}')));
+						$mapping['fields'][$fname] = array(array('rule'=>$comparison, 'rst'=>array('{{'.$val[4].'}}')));
 					}
 				}
 			}
