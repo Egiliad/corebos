@@ -46,7 +46,7 @@
 				</table>
 
 				<table cellspacing="0" cellpadding="5" class="listTable" width="100%">
-				{foreach item=elements from=$ORGINFO}	
+				{foreach item=elements from=$ORGINFO}
 				{assign var="MODULELABEL" value=$elements.0|getTranslatedString:$elements.0}
 				<tr>
 					<td width="30%" class="colHeader small cblds-p-v_medium" nowrap>{$MODULELABEL}</td>
@@ -56,10 +56,6 @@
 				</table>
 	</form>
 	</table>
-
-				<table border=0 cellspacing=0 cellpadding=5 width=100% >
-				<tr><td class="small" ><div align=right><a href="#top">{$MOD.LBL_SCROLL}</a></div></td></tr>
-				</table>
 		</td>
 	</tr>
 </table>
