@@ -232,6 +232,13 @@
 	<systemupdate>true</systemupdate>
 </changeSet>
 <changeSet>
+	<author>joebordes</author>
+	<description>Add functionality to Mail Converter</description>
+	<filename>build/changeSets/2020/addColumnsToMailConverter.php</filename>
+	<classname>addColumnsToMailConverter</classname>
+	<systemupdate>true</systemupdate>
+</changeSet>
+<changeSet>
 	<author>Elifuraha</author>
 	<description>FacturaScripts code fields</description>
 	<filename>build/changeSets/2020/fscriptscodfields.php</filename>

@@ -301,7 +301,7 @@ class VTSimpleTemplate {
 		$field = $fieldsql;
 		$fields = explode(',', $field);
 		for ($fidx = 0; $fidx<count($fields); $fidx++) {
-			$fields[$fidx] = trim(str_replace('vtiger_inventorydetails.', '', $fields[$fidx]));
+			$fields[$fidx] = trim($fields[$fidx]);
 			if ($fields[$fidx]=='productname' || $fields[$fidx]=='servicename') {
 				$fields[$fidx]='pdoname';
 			}
@@ -314,8 +314,6 @@ class VTSimpleTemplate {
 		// Checking if field present in the table.
 		// To Do.
 
-		$moduleName = $this->parent->getModuleName();
-		$wsUsersId = vtws_getEntityId('Users');
 		$wsid = $this->parent->getId();
 		list($wsid,$crmid) = explode('x', $wsid);
 		$cmsqlws = 'SELECT '.$field.'
@@ -323,23 +321,32 @@ class VTSimpleTemplate {
 			INNER JOIN vtiger_crmentity ON vtiger_inventorydetails.inventorydetailsid=vtiger_crmentity.crmid
 			LEFT JOIN vtiger_products ON vtiger_inventorydetails.productid=vtiger_products.productid
 			LEFT JOIN vtiger_service ON vtiger_inventorydetails.productid=vtiger_service.serviceid
-			WHERE related_to=?';
+			WHERE related_to=? order by sequence_no';
 		$retcm = '';
 		$wsid = $this->parent->getId();
 		$cmrs = $adb->pquery($cmsqlws, array($crmid));
 		if ($html) {
-			$retcm .= '<div class="inventorydetails"><ul class="inventorydetailsfields">';
+			$retcm .= '<div class="inventorydetailslist">';
 		}
 		if ($table) {
-			$retcm .= '<table class="inventorydetails"><tr class="inventorydetailsfields">';
+			$retcm .= '<table class="inventorydetails">';
 		}
 		while ($inv = $adb->fetch_array($cmrs)) {
+			if ($html) {
+				$retcm .= '<div class="inventorydetails"><ul class="inventorydetailsfields">';
+			}
+			if ($table) {
+				$retcm .= '<tr class="inventorydetailsfields">';
+			}
 			foreach ($fields as $fname) {
 				if ($html) {
 					$retcm .= '<li class="inventorydetailsfield">';
 				}
 				if ($table) {
 					$retcm .= '<td class="inventorydetailsfield">';
+				}
+				if (strpos($fname, '.')) { // FQN
+					list($void, $fname) = explode('.', $fname);
 				}
 				$fval = vtlib_purify($inv[$fname]);
 				if (is_numeric($fval)) {
@@ -356,12 +363,18 @@ class VTSimpleTemplate {
 					$retcm .= '</td>';
 				}
 			}
+			if ($html) {
+				$retcm .= '</ul></div>';
+			}
+			if ($table) {
+				$retcm .= '</tr>';
+			}
 		}
 		if ($html) {
-			$retcm .= '</ul></div>';
+			$retcm .= '</div>';
 		}
 		if ($table) {
-			$retcm .= '</tr></table>';
+			$retcm .= '</table>';
 		}
 		return $retcm;
 	}
@@ -428,7 +441,11 @@ class VTSimpleTemplate {
 		$backCurrentUser = $current_user;
 		$data = $this->parent->getData();
 		if (!empty($data['assigned_user_id'])) {
-			list($wsId,$assigned_user_id) = explode('x', $data['assigned_user_id']);
+			if (strpos($data['assigned_user_id'], 'x')>0) {
+				list($wsId,$assigned_user_id) = explode('x', $data['assigned_user_id']);
+			} else {
+				$assigned_user_id = $data['assigned_user_id'];
+			}
 			if (vtws_getOwnerType($assigned_user_id) == 'Groups') {
 				require_once 'include/utils/GetGroupUsers.php';
 				$ggu = new GetGroupUsers();
@@ -505,9 +522,20 @@ class VTSimpleTemplate {
 			list($fieldname, $field) = explode('->', decode_html($fieldname));
 		}
 		if (substr($fieldname, 0, 16)=='inventorydetails') {
-			$inventoryspec = explode('_', $fieldname);
-			$format = isset($inventoryspec[1]) ? $inventoryspec[1] : 'html';
-			$field = isset($inventoryspec[2]) ? $inventoryspec[2] : '*';
+			$inventoryspec = substr($fieldname, 17);
+			if (strlen($inventoryspec)>0) {
+				$underscore = strpos($inventoryspec, '_');
+				if ($underscore!==false) {
+					$format = substr($inventoryspec, 0, $underscore);
+					$field = substr($inventoryspec, $underscore+1);
+				} else {
+					$format = $inventoryspec;
+					$field = '*';
+				}
+			} else {
+				$format = 'html';
+				$field = '*';
+			}
 			$fieldname = 'inventorydetails';
 		}
 		if (substr($fieldname, 0, 11) == 'scanBarCode') {
