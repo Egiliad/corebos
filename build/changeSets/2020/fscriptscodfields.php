@@ -96,9 +96,11 @@ class fscriptscodfields extends cbupdaterWorker {
 					),
 				),
 			);
-			$adb->query('update vtiger_invoice set fssynced=0 where fssynced is null');
-			$adb->query('update vtiger_purchaseorder set fssynced=0 where fssynced is null');
 			$this->massCreateFields($fields);
+			$this->ExecuteQuery('update vtiger_invoice set fssynced=0 where fssynced is null');
+			$this->ExecuteQuery('update vtiger_purchaseorder set fssynced=0 where fssynced is null');
+			$this->ExecuteQuery('update vtiger_account set fssynced=0 where fssynced is null');
+			$this->ExecuteQuery('update vtiger_vendor set fssynced=0 where fssynced is null');
 			$this->sendMsg('Changeset '.get_class($this).' applied!');
 			$this->markApplied();
 		}
