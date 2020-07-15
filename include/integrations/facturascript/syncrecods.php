@@ -1,10 +1,25 @@
 <?php
+header('Content-Type: text/event-stream');
+header('Cache-Control: no-cache'); // recommended to prevent caching of event data.
+set_time_limit(0);
 include_once 'include/Webservices/ExecuteWorkflow.php';
 require_once 'Smarty_setup.php';
 global $current_user,$log,$adb;
+ 
+function send_message($id, $message, $progress, $processed, $total) {
+	$d = array('message' => $message , 'progress' => $progress, 'processed' => $processed, 'total' => $total);
+	echo "id: $id" . PHP_EOL;
+	echo 'data:'. json_encode($d) . PHP_EOL;
+	echo PHP_EOL;
+	ob_flush();
+	flush();
+}
 $module = $_REQUEST['module'];  // here we get Invoice or PO
 $WSmodule = vtws_getEntityId($module); // here we go to the ws_entity table to get the module WS number
 $ids = explode(';', vtlib_purify(trim($_REQUEST['ids'], ';'))); // we convert thecomma separated list of crmids into an array
+$recordprocessed = 0;
+$id = 1;
+$SSE_SOURCE_KEY = '';
 $crmids = array_map(
 	function ($id) {
 		global $WSmodule;
@@ -128,10 +143,22 @@ switch ($module) {
 		break;
 }
 if ($response == '') {
-	$smarty = new vtigerCRM_Smarty();
-	$smarty->assign('ERROR_MESSAGE_CLASS', 'cb-alert-success');
-	$smarty->assign('ERROR_MESSAGE', getTranslatedString('Invoice_synced_correct', 'Invoice'));
-	echo'%%%MSG%%%'.$smarty->fetch('applicationmessage.tpl');
+	if (isset($_REQUEST['params'])) {
+		$params = json_decode(vtlib_purify($_REQUEST['params']), true);
+		$SSE_SOURCE_KEY = $params['SSE_SOURCE_KEY'];
+		$listparams = coreBOS_Settings::getSetting($SSE_SOURCE_KEY, null);
+		$listparams = json_decode($listparams, true);
+		$ids = explode(';', trim($listparams['ids'], ';'));
+		$recordcount = count($ids);
+		foreach ($ids as $syncedrec) {
+			$msg = $app_strings['record'].' '.$syncedrec.' '.$app_strings['synced'].'!';
+			send_message($id++, $msg, $progress, $recordprocessed, $recordcount);
+			$recordprocessed++;
+			$progress = round($recordprocessed / $recordcount * 100, 0);
+		}
+	}
+	send_message('CLOSE', $app_strings['processcomplete'], 100, $recordprocessed, $recordcount);
+	coreBOS_Settings::delSetting($SSE_SOURCE_KEY);
 } else {
 	echo json_encode($response);
 }

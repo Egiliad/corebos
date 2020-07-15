@@ -1011,8 +1011,8 @@ class corebos_fsi {
 			$baruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
 			$tabid = getTabId('Invoice');
 			BusinessActions::addLink(getTabid('Invoice'), 'DETAILVIEWBASIC', 'Send Invoice to FS', 'javascript:runBAScript(\'index.php?module=Invoice&action=InvoiceAjax&file=syncrecods&ids=$RECORD$\')', '', 0, null, false, $baruleId);
-			BusinessActions::addLink($tabid, 'LISTVIEWBASIC', 'Send Invoice to FS', "javascript:runBAScriptFromListView('syncrecods', '\$MODULE\$', returnresponse)", '', 0, null, true);
-			BusinessActions::addLink($tabid, 'HEADERSCRIPT', 'Send Invoice to FS', 'include/integrations/facturascript/ReturnResponse.js', 0, '', true);
+			BusinessActions::addLink($tabid, 'LISTVIEWBASIC', 'Send Invoice to FS', "javascript:runBAScriptFromListViewSSE('syncrecods', '\$MODULE\$', run_returnresponse)", '', 0, null, true);
+			BusinessActions::addLink($tabid, 'HEADERSCRIPT', 'Send Invoice to FS', 'modules/Vtiger/returnresponseSSE.js', 0, '', true);
 			// BusinessActions::addLink(getTabid('Invoice'), 'DETAILVIEWBASIC', 'Send Invoice to FS', 'javascript:runBAWorkflow('.$fswflow->id.', $RECORD$);', '', 0, null, false, $baruleId);
 		}
 		//RAC Hide the Delete Button on Invoice Module
@@ -2615,8 +2615,8 @@ class corebos_fsi {
 			$baruleId = isset($idComponents[1]) ? $idComponents[1] : 0;
 			$tabid = getTabId('PurchaseOrder');
 			BusinessActions::addLink(getTabid('PurchaseOrder'), 'DETAILVIEWBASIC', 'Send PurchaseOrder to FS', 'javascript:runBAScript(\'index.php?module=PurchaseOrder&action=PurchaseOrderAjax&file=syncrecods&ids=$RECORD$\')', '', 0, null, false, $baruleId);
-			BusinessActions::addLink($tabid, 'LISTVIEWBASIC', 'Send PurchaseOrder', "javascript:runBAScriptFromListView('syncrecods', '\$MODULE\$',returnresponse)", '', 0, null, true);
-			BusinessActions::addLink($tabid, 'HEADERSCRIPT', 'Send PurchaseOrder', 'include/integrations/facturascript/ReturnResponse.js', 0, '', true);
+			BusinessActions::addLink($tabid, 'LISTVIEWBASIC', 'Send PurchaseOrder', "javascript:runBAScriptFromListViewSSE('syncrecods', '\$MODULE\$',run_returnresponse)", '', 0, null, true);
+			BusinessActions::addLink($tabid, 'HEADERSCRIPT', 'Send PurchaseOrder', 'modules/Vtiger/returnresponseSSE.js', 0, '', true);
 			// BusinessActions::addLink(getTabid('PurchaseOrder'), 'DETAILVIEWBASIC', 'Send PurchaseOrder to FS', 'javascript:runBAWorkflow('.$fswflow->id.', $RECORD$);', '', 0, null, false, $baruleId);
 		}
 		//RAC Hide the Delete Button on PurchaseOrder Module

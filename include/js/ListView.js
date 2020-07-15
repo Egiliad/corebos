@@ -1095,9 +1095,6 @@ function runBAScriptFromListView(scriptname, module, callback) {
 			var count = x.length;
 			if (count > 1) {
 				idstring = select_options;
-				var progressBlock = document.getElementById('relresultssection');
-				progressBlock.style.visibility = 'visible';
-				progressBlock.style.display = 'block';
 			} else {
 				alert(alert_arr.SELECT);
 				return false;
@@ -1132,16 +1129,6 @@ function runBAScriptFromListView(scriptname, module, callback) {
 				}).done(function (response) {
 					VtigerJS_DialogBox.unblock();
 					VtigerJS_DialogBox.hidebusy();
-					var synced = x.length-1;
-					let myArray = x;
-					for(let i = 0; i < myArray.length-1; i++){
-						 __addLog('<br>Record ' + myArray[i] + ' Saved!');
-						}
-						__addLog('<br><b>' + alert_arr.ProcessFINISHED + '!</b>');
-					var pBar = document.getElementById('progressor');
-					pBar.value = pBar.max; //max out the progress bar
-					var perc = document.getElementById('percentage');
-					perc.innerHTML   = pBar.max  + '% &nbsp;&nbsp;' + synced + '/' + synced;
 					if (typeof callback == 'function') {
 						callback(response);
 					}
