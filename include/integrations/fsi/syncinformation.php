@@ -60,6 +60,7 @@ class corebos_sync {
         // finish Execution
         if ($finished) {
             coreBOS_Settings::setSetting('fssync_working', '0');
+            echo '<script type="text/javascript"> displayResult('.$cnt.'); </script>';
         }
     }
     public function getWorkflowFor($module){
@@ -87,4 +88,19 @@ class corebos_sync {
     }
 
 }
+
+$smarty->display('Smarty/templates/MassEditHtml.tpl');
 ?>
+<script>
+function displayResult(cnt){
+	// console.log('BATCH PROCESSED '.$cnt);
+	var rdo = document.getElementById('relresultssection');
+	rdo.style.visibility = 'visible';
+	rdo.style.display = 'block';
+		__addLog('BATCH PROCESSED' + '&nbsp;&nbsp;' + cnt);
+		var pBar = document.getElementById('progressor');
+		pBar.value = pBar.max; //max out the progress bar
+		var perc = document.getElementById('percentage');
+		perc.innerHTML   = 100  + '% &nbsp;&nbsp;' + cnt + '/' + cnt;
+}
+</script>

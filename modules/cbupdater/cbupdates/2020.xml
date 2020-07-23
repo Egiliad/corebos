@@ -252,4 +252,11 @@
 	<classname>changeprofilecolumncapitalization</classname>
 	<systemupdate>true</systemupdate>
 </changeSet>
+<changeSet>
+	<author>Elifuraha</author>
+	<description>FacturaScripts code fields</description>
+	<filename>build/changeSets/2020/fscriptscodfields.php</filename>
+	<classname>fscriptscodfields</classname>
+	<systemupdate>true</systemupdate>
+</changeSet>
 </updatesChangeLog>
